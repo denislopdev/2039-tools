@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Resizer — 2039</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --void: #020617;
+      --void-2: #0b1120;
+      --glass: rgba(15, 23, 42, 0.62);
+      --border: rgba(148, 163, 184, 0.14);
+      --border-glow: rgba(34, 211, 238, 0.35);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --cyan: #22d3ee;
+      --violet: #a78bfa;
+      --pink: #f472b6;
+      --emerald: #34d399;
+      --radius: 20px;
+      --radius-sm: 12px;
+      --font: "Outfit", system-ui, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --shadow: 0 25px 80px rgba(0, 0, 0, 0.55);
+      --glow: 0 0 40px rgba(34, 211, 238, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--void);
+      overflow: hidden;
+    }
+
+    .app {
+      --mesh-x: 50%;
+      --mesh-y: 40%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      isolation: isolate;
+      background:
+        radial-gradient(ellipse 80% 60% at var(--mesh-x) var(--mesh-y), rgba(34, 211, 238, 0.09), transparent 55%),
+        radial-gradient(ellipse 60% 50% at 85% 15%, rgba(167, 139, 250, 0.11), transparent 50%),
+        radial-gradient(ellipse 50% 40% at 10% 80%, rgba(244, 114, 182, 0.07), transparent 45%),
+        linear-gradient(180deg, var(--void) 0%, var(--void-2) 100%);
+    }
+
+    .app::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 90% 80% at 50% 45%, black 20%, transparent 75%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .viewer-hud, .workspace, .viewer-status, .help-section { position: relative; z-index: 1; }
+
+    .viewer-hud {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(2, 6, 23, 0.72);
+      backdrop-filter: blur(20px) saturate(1.4);
+      flex-shrink: 0;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+
+    .logo {
+      width: 38px; height: 38px; border-radius: 11px;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      box-shadow: 0 0 24px rgba(34, 211, 238, 0.35);
+      display: grid; place-items: center;
+      font-size: 11px; font-weight: 700; color: #020617; flex-shrink: 0;
+    }
+
+    .brand h1 { margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+    .brand p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+
+    .hud-steps {
+      display: flex; gap: 6px; flex-wrap: wrap;
+      padding: 4px; border-radius: 999px;
+      background: var(--glass); border: 1px solid var(--border);
+    }
+
+    .step-chip {
+      padding: 7px 14px; border-radius: 999px; font-size: 12px; font-weight: 600;
+      color: var(--muted); background: transparent; border: none; cursor: default;
+      font-family: inherit; transition: 0.2s;
+    }
+
+    .step-chip.active {
+      color: #020617;
+      background: linear-gradient(135deg, var(--cyan), #67e8f9);
+      box-shadow: 0 0 18px rgba(34, 211, 238, 0.3);
+    }
+
+    .step-chip.done { color: var(--emerald); }
+
+    .workspace {
+      flex: 1;
+      overflow: auto;
+      padding: 14px;
+      min-height: 0;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .panel {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(24px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      background: rgba(2, 6, 23, 0.5);
+    }
+
+    .panel-header h2 { margin: 0; font-size: 14px; font-weight: 700; }
+    .panel-header p { margin: 4px 0 0; font-size: 12px; color: var(--muted); }
+    .panel-header .tag {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--cyan);
+    }
+
+    .panel-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+
+    button {
+      border: none; cursor: pointer; font-family: inherit; font-weight: 600;
+      border-radius: var(--radius-sm); padding: 10px 14px; transition: 0.18s ease;
+    }
+
+    .btn-primary {
+      color: #020617;
+      background: linear-gradient(135deg, var(--cyan), #67e8f9);
+      box-shadow: 0 0 20px rgba(34, 211, 238, 0.25);
+      width: 100%;
+    }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 0 28px rgba(34, 211, 238, 0.4); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    .btn-ghost {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--border-glow); background: rgba(34, 211, 238, 0.06); transform: translateY(-1px); }
+
+    .btn-success {
+      color: #020617;
+      background: linear-gradient(135deg, var(--emerald), #6ee7b7);
+      box-shadow: 0 0 20px rgba(52, 211, 153, 0.25);
+      width: 100%;
+      margin-top: 14px;
+    }
+    .btn-success:hover { transform: translateY(-1px); box-shadow: 0 0 28px rgba(52, 211, 153, 0.4); }
+    .btn-success.hidden { display: none; }
+
+    .drop-zone {
+      width: 100%;
+      min-height: 220px;
+      flex: 1;
+      border: 2px dashed rgba(148, 163, 184, 0.2);
+      border-radius: var(--radius-sm);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at center, rgba(34, 211, 238, 0.04), transparent 60%),
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0 1px, transparent 1px 12px);
+      transition: border-color 0.2s, background 0.2s;
+      cursor: pointer;
+      margin-bottom: 14px;
+    }
+
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--border-glow);
+      background: rgba(34, 211, 238, 0.06);
+    }
+
+    .drop-zone.has-image { border-style: solid; border-color: var(--border); cursor: default; padding: 12px; }
+    .drop-zone img, .drop-zone canvas {
+      max-width: 100%; max-height: 280px; object-fit: contain;
+      border-radius: 10px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .drop-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: rgba(34, 211, 238, 0.1);
+      border: 1px solid rgba(34, 211, 238, 0.2);
+      display: grid; place-items: center;
+      color: var(--cyan);
+    }
+    .drop-icon svg {
+      width: 22px; height: 22px; stroke: currentColor; fill: none;
+      stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    .drop-text { font-size: 13px; color: var(--muted); text-align: center; line-height: 1.5; }
+    .drop-text strong { color: var(--cyan); }
+
+    .status-info {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 14px;
+      background: rgba(2, 6, 23, 0.45);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 14px;
+    }
+
+    .field { flex: 1; min-width: 100px; }
+    .field label {
+      display: block; font-size: 11px; font-weight: 600;
+      color: var(--muted); margin-bottom: 6px;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+
+    input[type="number"], select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 11px;
+      font-family: var(--mono);
+      font-size: 13px;
+      outline: none;
+      background: rgba(2, 6, 23, 0.5);
+      color: var(--text);
+    }
+    input:focus, select:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.12);
+    }
+
+    .aspect-row {
+      display: flex; align-items: center; gap: 8px;
+      width: 100%; margin-top: 4px;
+      font-size: 13px; color: var(--muted);
+    }
+
+    .aspect-row input[type="checkbox"] {
+      width: 16px; height: 16px; accent-color: var(--cyan); cursor: pointer;
+    }
+
+    .presets {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
+    }
+
+    .preset-btn {
+      padding: 6px 12px; font-size: 11px; font-weight: 600;
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--muted); border: 1px solid var(--border);
+      border-radius: 999px;
+    }
+    .preset-btn:hover {
+      color: var(--text);
+      border-color: var(--border-glow);
+      background: rgba(34, 211, 238, 0.06);
+    }
+
+    .help-section {
+      max-width: 1180px;
+      margin: 12px auto 0;
+      padding: 18px 20px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      backdrop-filter: blur(24px);
+    }
+
+    .help-section h3 {
+      margin: 0 0 12px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .help-section ol {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 13px;
+      line-height: 1.75;
+      color: var(--muted);
+    }
+
+    .help-section strong { color: var(--cyan); font-weight: 600; }
+
+    .viewer-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 20px;
+      border-top: 1px solid var(--border);
+      background: rgba(2, 6, 23, 0.78);
+      backdrop-filter: blur(16px);
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .status-left, .status-right { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+    .credit-link {
+      color: var(--muted);
+      font-size: 11px;
+      text-decoration: none;
+      transition: color 0.18s ease;
+    }
+    .credit-link:hover { color: var(--cyan); }
+
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald);
+      animation: pulse 2s ease infinite;
+    }
+
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+
+    .status-chip {
+      padding: 3px 8px; border-radius: 6px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .toast {
+      position: fixed; right: 20px; bottom: 20px;
+      background: rgba(15, 23, 42, 0.95); color: var(--text);
+      padding: 12px 16px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border-glow);
+      box-shadow: 0 0 30px rgba(34, 211, 238, 0.2);
+      opacity: 0; transform: translateY(12px); pointer-events: none;
+      transition: 0.25s ease; z-index: 120; font-size: 13px; font-weight: 600;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    input[type="file"] { display: none; }
+
+    @media (max-width: 900px) {
+      html, body { overflow: auto; }
+      .app { height: auto; min-height: 100vh; }
+      .main-grid { grid-template-columns: 1fr; }
+      .hud-steps { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app" id="appRoot">
+  <header class="viewer-hud">
+    <div class="brand">
+      <div class="logo">IR</div>
+      <div>
+        <h1>Image Resizer</h1>
+        <p>Neural resize · step by step</p>
+      </div>
+    </div>
+    <div class="hud-steps" aria-label="Workflow steps">
+      <span class="step-chip" id="step1">1 · Upload</span>
+      <span class="step-chip" id="step2">2 · Resize</span>
+      <span class="step-chip" id="step3">3 · Generate</span>
+      <span class="step-chip" id="step4">4 · Download</span>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <div class="main-grid">
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <span class="tag">Source</span>
+            <h2>Original Image</h2>
+            <p>Upload or drop your photo.</p>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="drop-zone" id="originalBox" tabindex="0" role="button" aria-label="Upload image">
+            <div class="drop-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+            </div>
+            <span class="drop-text">Drop image here or <strong>click to browse</strong></span>
+          </div>
+          <input type="file" id="fileInput" accept="image/*" />
+
+          <div class="status-info" id="originalInfo">Original size: —</div>
+
+          <div class="presets" id="presets">
+            <button class="preset-btn" type="button" data-w="1920" data-h="1080">HD 1920×1080</button>
+            <button class="preset-btn" type="button" data-w="1280" data-h="720">HD 1280×720</button>
+            <button class="preset-btn" type="button" data-w="1080" data-h="1080">Square 1080</button>
+            <button class="preset-btn" type="button" data-w="1200" data-h="630">OG 1200×630</button>
+            <button class="preset-btn" type="button" data-w="390" data-h="844">Mobile</button>
+          </div>
+
+          <div class="controls">
+            <div class="field">
+              <label for="newWidth">Width (px)</label>
+              <input type="number" id="newWidth" value="800" min="1" max="8000" />
+            </div>
+            <div class="field">
+              <label for="newHeight">Height (px)</label>
+              <input type="number" id="newHeight" value="600" min="1" max="8000" />
+            </div>
+            <div class="field">
+              <label for="formatSelect">Format</label>
+              <select id="formatSelect">
+                <option value="image/png">PNG</option>
+                <option value="image/jpeg">JPEG</option>
+                <option value="image/webp">WebP</option>
+              </select>
+            </div>
+            <div class="aspect-row">
+              <input type="checkbox" id="keepAspect" checked />
+              <label for="keepAspect">Lock aspect ratio</label>
+            </div>
+          </div>
+
+          <button class="btn-primary" id="generateBtn" type="button" disabled>Generate Preview</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <span class="tag">Output</span>
+            <h2>Resized Preview</h2>
+            <p>Review before download.</p>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="drop-zone" id="previewBox">
+            <div class="drop-icon">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+            </div>
+            <span class="drop-text">Waiting for generation…</span>
+          </div>
+
+          <div class="status-info" id="previewInfo">Result size: —</div>
+
+          <button class="btn-success hidden" id="downloadBtn" type="button">Download Resized Image</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="help-section">
+      <h3>How to use</h3>
+      <ol>
+        <li>Click the upload area or <strong>drag & drop</strong> your image.</li>
+        <li>Set <strong>width</strong> and <strong>height</strong> — use presets or enter custom values.</li>
+        <li>Click <strong>Generate Preview</strong> to process the image.</li>
+        <li>When the preview appears, click <strong>Download</strong> to save the file.</li>
+      </ol>
+    </div>
+  </main>
+
+  <footer class="viewer-status">
+    <div class="status-left">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span id="statusLabel">Ready</span>
+      <span class="status-chip" id="fileNameChip">No file</span>
+    </div>
+    <div class="status-right">
+      <a class="credit-link" href="index.html" title="2039 Tools">Тяни слоп</a>
+      <span class="status-chip">Local only</span>
+      <span id="statusTime">—</span>
+    </div>
+  </footer>
+</div>
+
+<div class="toast" id="toast">Done</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const STORAGE_KEY = "image-resizer-2039-settings";
+
+  const fileInput = document.getElementById("fileInput");
+  const originalBox = document.getElementById("originalBox");
+  const previewBox = document.getElementById("previewBox");
+  const originalInfo = document.getElementById("originalInfo");
+  const previewInfo = document.getElementById("previewInfo");
+  const widthInput = document.getElementById("newWidth");
+  const heightInput = document.getElementById("newHeight");
+  const aspectCheck = document.getElementById("keepAspect");
+  const formatSelect = document.getElementById("formatSelect");
+  const generateBtn = document.getElementById("generateBtn");
+  const downloadBtn = document.getElementById("downloadBtn");
+  const toast = document.getElementById("toast");
+  const appRoot = document.getElementById("appRoot");
+
+  const steps = {
+    1: document.getElementById("step1"),
+    2: document.getElementById("step2"),
+    3: document.getElementById("step3"),
+    4: document.getElementById("step4")
+  };
+
+  let activeImage = null;
+  let ratio = 1;
+  let resultCanvas = null;
+  let fileName = "";
+
+  function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add("show");
+    setTimeout(function () { toast.classList.remove("show"); }, 1800);
+  }
+
+  function updateTime() {
+    document.getElementById("statusTime").textContent = new Date().toLocaleTimeString();
+  }
+
+  function setStep(active) {
+    Object.keys(steps).forEach(function (key) {
+      const n = parseInt(key, 10);
+      steps[key].classList.remove("active", "done");
+      if (n < active) steps[key].classList.add("done");
+      if (n === active) steps[key].classList.add("active");
+    });
+  }
+
+  function saveSettings() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      width: widthInput.value,
+      height: heightInput.value,
+      aspect: aspectCheck.checked,
+      format: formatSelect.value
+    }));
+  }
+
+  function loadSettings() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (!saved) return;
+      if (saved.width) widthInput.value = saved.width;
+      if (saved.height) heightInput.value = saved.height;
+      if (typeof saved.aspect === "boolean") aspectCheck.checked = saved.aspect;
+      if (saved.format) formatSelect.value = saved.format;
+    } catch (e) { /* ignore */ }
+  }
+
+  function resetPreview() {
+    resultCanvas = null;
+    previewBox.classList.remove("has-image");
+    previewBox.innerHTML =
+      '<div class="drop-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>' +
+      '<span class="drop-text">Waiting for generation…</span>';
+    previewInfo.textContent = "Result size: —";
+    downloadBtn.classList.add("hidden");
+    setStep(2);
+  }
+
+  function loadImage(src, name) {
+    const img = new Image();
+    img.onload = function () {
+      activeImage = img;
+      ratio = img.width / img.height;
+      fileName = name || "image";
+
+      originalBox.classList.add("has-image");
+      originalBox.innerHTML = "";
+      const displayImg = document.createElement("img");
+      displayImg.src = img.src;
+      displayImg.alt = "Original";
+      originalBox.appendChild(displayImg);
+
+      originalInfo.textContent = "Original size: " + img.width + " × " + img.height + " px";
+      widthInput.value = img.width;
+      heightInput.value = img.height;
+
+      generateBtn.disabled = false;
+      document.getElementById("fileNameChip").textContent = fileName;
+      document.getElementById("statusLabel").textContent = "Image loaded";
+      setStep(2);
+      resetPreview();
+      saveSettings();
+      updateTime();
+      showToast("Image loaded");
+    };
+    img.src = src;
+  }
+
+  function handleFile(file) {
+    if (!file || !file.type.startsWith("image/")) {
+      showToast("Please select an image file");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      loadImage(event.target.result, file.name);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  originalBox.addEventListener("click", function () {
+    if (!activeImage) fileInput.click();
+  });
+
+  originalBox.addEventListener("keydown", function (e) {
+    if ((e.key === "Enter" || e.key === " ") && !activeImage) {
+      e.preventDefault();
+      fileInput.click();
+    }
+  });
+
+  originalBox.addEventListener("dragover", function (e) {
+    e.preventDefault();
+    originalBox.classList.add("dragover");
+  });
+
+  originalBox.addEventListener("dragleave", function () {
+    originalBox.classList.remove("dragover");
+  });
+
+  originalBox.addEventListener("drop", function (e) {
+    e.preventDefault();
+    originalBox.classList.remove("dragover");
+    const file = e.dataTransfer.files[0];
+    handleFile(file);
+  });
+
+  fileInput.addEventListener("change", function (e) {
+    handleFile(e.target.files[0]);
+    fileInput.value = "";
+  });
+
+  widthInput.addEventListener("input", function () {
+    if (aspectCheck.checked && activeImage) {
+      heightInput.value = Math.max(1, Math.round(widthInput.value / ratio));
+    }
+    saveSettings();
+    resetPreview();
+  });
+
+  heightInput.addEventListener("input", function () {
+    if (aspectCheck.checked && activeImage) {
+      widthInput.value = Math.max(1, Math.round(heightInput.value * ratio));
+    }
+    saveSettings();
+    resetPreview();
+  });
+
+  aspectCheck.addEventListener("change", saveSettings);
+  formatSelect.addEventListener("change", saveSettings);
+
+  document.querySelectorAll(".preset-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      if (!activeImage) {
+        showToast("Upload an image first");
+        return;
+      }
+      const w = parseInt(btn.dataset.w, 10);
+      const h = parseInt(btn.dataset.h, 10);
+      if (aspectCheck.checked) {
+        if (w / h > ratio) {
+          widthInput.value = Math.round(h * ratio);
+          heightInput.value = h;
+        } else {
+          widthInput.value = w;
+          heightInput.value = Math.round(w / ratio);
+        }
+      } else {
+        widthInput.value = w;
+        heightInput.value = h;
+      }
+      saveSettings();
+      resetPreview();
+      showToast("Preset applied");
+    });
+  });
+
+  generateBtn.addEventListener("click", function () {
+    if (!activeImage) return;
+
+    const targetW = Math.max(1, parseInt(widthInput.value, 10) || 1);
+    const targetH = Math.max(1, parseInt(heightInput.value, 10) || 1);
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = targetW;
+    canvas.height = targetH;
+    ctx.drawImage(activeImage, 0, 0, targetW, targetH);
+
+    resultCanvas = canvas;
+    previewBox.classList.add("has-image");
+    previewBox.innerHTML = "";
+    previewBox.appendChild(canvas);
+
+    previewInfo.textContent = "Result size: " + targetW + " × " + targetH + " px";
+    downloadBtn.classList.remove("hidden");
+
+    document.getElementById("statusLabel").textContent = "Preview ready";
+    setStep(4);
+    updateTime();
+    showToast("Preview generated");
+  });
+
+  downloadBtn.addEventListener("click", function () {
+    if (!resultCanvas) return;
+
+    const targetW = resultCanvas.width;
+    const targetH = resultCanvas.height;
+    const mime = formatSelect.value;
+    const ext = mime === "image/jpeg" ? "jpg" : mime === "image/webp" ? "webp" : "png";
+    const quality = mime === "image/png" ? undefined : 0.92;
+
+    const link = document.createElement("a");
+    const baseName = fileName.replace(/\.[^.]+$/, "") || "image";
+    link.download = baseName + "_" + targetW + "x" + targetH + "." + ext;
+    link.href = resultCanvas.toDataURL(mime, quality);
+    link.click();
+
+    setStep(4);
+    steps[4].classList.add("done");
+    showToast("Download started");
+  });
+
+  appRoot.addEventListener("mousemove", function (e) {
+    const rect = appRoot.getBoundingClientRect();
+    appRoot.style.setProperty("--mesh-x", ((e.clientX - rect.left) / rect.width) * 100 + "%");
+    appRoot.style.setProperty("--mesh-y", ((e.clientY - rect.top) / rect.height) * 100 + "%");
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === "s" && resultCanvas) {
+      e.preventDefault();
+      downloadBtn.click();
+    }
+  });
+
+  loadSettings();
+  setStep(1);
+  updateTime();
+});
+</script>
+
+</body>
+</html>

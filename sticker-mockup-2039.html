@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sticker Mockup — 2039</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --void: #020617;
+      --void-2: #0b1120;
+      --glass: rgba(15, 23, 42, 0.62);
+      --border: rgba(148, 163, 184, 0.14);
+      --border-glow: rgba(34, 211, 238, 0.35);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --cyan: #22d3ee;
+      --violet: #a78bfa;
+      --pink: #f472b6;
+      --emerald: #34d399;
+      --radius: 20px;
+      --radius-sm: 12px;
+      --font: "Outfit", system-ui, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --shadow: 0 25px 80px rgba(0, 0, 0, 0.55);
+      --glow: 0 0 40px rgba(34, 211, 238, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--void);
+      overflow: hidden;
+    }
+
+    .app {
+      --mesh-x: 50%;
+      --mesh-y: 40%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      isolation: isolate;
+      background:
+        radial-gradient(ellipse 80% 60% at var(--mesh-x) var(--mesh-y), rgba(34, 211, 238, 0.09), transparent 55%),
+        radial-gradient(ellipse 60% 50% at 85% 15%, rgba(167, 139, 250, 0.11), transparent 50%),
+        radial-gradient(ellipse 50% 40% at 10% 80%, rgba(244, 114, 182, 0.07), transparent 45%),
+        linear-gradient(180deg, var(--void) 0%, var(--void-2) 100%);
+    }
+
+    .app::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 90% 80% at 50% 45%, black 20%, transparent 75%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .viewer-hud, .workspace, .viewer-status { position: relative; z-index: 1; }
+
+    .viewer-hud {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(2, 6, 23, 0.72);
+      backdrop-filter: blur(20px) saturate(1.4);
+      flex-shrink: 0;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+
+    .logo {
+      width: 38px; height: 38px; border-radius: 11px;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      box-shadow: 0 0 24px rgba(34, 211, 238, 0.35);
+      display: grid; place-items: center;
+      font-size: 11px; font-weight: 700; color: #020617; flex-shrink: 0;
+    }
+
+    .brand h1 { margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+    .brand p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+
+    .hud-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    button {
+      border: none; cursor: pointer; font-family: inherit; font-weight: 600;
+      border-radius: var(--radius-sm); padding: 9px 13px; transition: 0.18s ease;
+      font-size: 12px;
+    }
+
+    .btn-primary {
+      color: #020617;
+      background: linear-gradient(135deg, var(--cyan), #67e8f9);
+      box-shadow: 0 0 20px rgba(34, 211, 238, 0.25);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 0 28px rgba(34, 211, 238, 0.4); }
+
+    .btn-ghost {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--border-glow); background: rgba(34, 211, 238, 0.06); transform: translateY(-1px); }
+
+    .btn-danger {
+      color: #fff;
+      background: linear-gradient(135deg, var(--pink), #e11d48);
+      border: 1px solid rgba(244, 114, 182, 0.3);
+    }
+    .btn-danger:hover { transform: translateY(-1px); }
+
+    .workspace {
+      flex: 1;
+      overflow: auto;
+      padding: 14px;
+      min-height: 0;
+    }
+
+    .layout {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr) 220px;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(24px);
+      padding: 14px;
+      min-width: 0;
+    }
+
+    .section {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section:first-child { padding-top: 0; }
+    .section:last-child { border-bottom: 0; padding-bottom: 0; }
+
+    .section-title h2 {
+      margin: 0 0 10px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--cyan);
+    }
+
+    label {
+      display: block;
+      font-size: 10px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    input[type="file"], select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 9px 10px;
+      font-family: inherit;
+      font-size: 11px;
+      outline: none;
+      background: rgba(2, 6, 23, 0.5);
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    input[type="file"]:last-child, select:last-child { margin-bottom: 0; }
+
+    input:focus, select:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.12);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--cyan);
+    }
+
+    .control { margin-bottom: 12px; }
+    .control:last-child { margin-bottom: 0; }
+
+    .button-stack { display: grid; gap: 8px; margin-top: 4px; }
+
+    .button-stack button { width: 100%; }
+
+    .stage-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(24px);
+      padding: 14px;
+      min-width: 0;
+    }
+
+    .toolbar { margin-bottom: 10px; }
+    .toolbar strong { display: block; font-size: 14px; margin-bottom: 4px; }
+    .toolbar span { color: var(--muted); font-size: 12px; line-height: 1.5; }
+
+    .mockup-stage {
+      position: relative;
+      width: 100%;
+      height: 420px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background:
+        linear-gradient(45deg, rgba(148,163,184,0.08) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(148,163,184,0.08) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(148,163,184,0.08) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(148,163,184,0.08) 75%);
+      background-size: 24px 24px;
+      background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+      border: 1px dashed rgba(148, 163, 184, 0.2);
+      user-select: none;
+      touch-action: none;
+    }
+
+    .mockup-stage.has-bg {
+      background: rgba(2, 6, 23, 0.45);
+      border-style: solid;
+      border-color: var(--border);
+    }
+
+    .background-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .preview-grid {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      display: none;
+      opacity: var(--grid-opacity, 0.45);
+      background-image:
+        linear-gradient(rgba(34, 211, 238, 0.45) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 211, 238, 0.45) 1px, transparent 1px);
+      background-size: var(--grid-size, 60px) var(--grid-size, 60px);
+    }
+
+    .preview-grid.is-visible { display: block; }
+
+    .empty-state {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 30px;
+      color: var(--muted);
+      z-index: 4;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .empty-state b {
+      display: block;
+      color: var(--text);
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .sticker-layer {
+      position: absolute;
+      left: 0; top: 0;
+      width: 260px; height: 260px;
+      transform-origin: 0 0;
+      cursor: grab;
+      display: none;
+      will-change: transform;
+      z-index: 5;
+      opacity: 1;
+    }
+
+    .sticker-layer:active { cursor: grabbing; }
+
+    .sticker-layer img {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      display: block;
+      object-fit: contain;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .sticker-blend { mix-blend-mode: multiply; opacity: 1; }
+    .sticker-bright { mix-blend-mode: normal; opacity: 0.58; }
+
+    .sticker-outline {
+      position: absolute;
+      inset: 0;
+      border: 1.5px solid rgba(34, 211, 238, 0.95);
+      border-radius: 8px;
+      pointer-events: none;
+      mix-blend-mode: difference;
+    }
+
+    .corner {
+      position: absolute;
+      width: 16px; height: 16px;
+      border: 2px solid #fff;
+      background: var(--cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(34, 211, 238, 0.6);
+      z-index: 5;
+    }
+
+    .corner.tl { left: -8px; top: -8px; cursor: nwse-resize; }
+    .corner.tr { right: -8px; top: -8px; cursor: nesw-resize; }
+    .corner.br { right: -8px; bottom: -8px; cursor: nwse-resize; }
+    .corner.bl { left: -8px; bottom: -8px; cursor: nesw-resize; }
+
+    .viewer-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 20px;
+      border-top: 1px solid var(--border);
+      background: rgba(2, 6, 23, 0.78);
+      backdrop-filter: blur(16px);
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .status-left, .status-right { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+    .credit-link {
+      color: var(--muted);
+      font-size: 11px;
+      text-decoration: none;
+      transition: color 0.18s ease;
+    }
+    .credit-link:hover { color: var(--cyan); }
+
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald);
+      animation: pulse 2s ease infinite;
+    }
+
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+
+    .status-chip {
+      padding: 3px 8px; border-radius: 6px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .toast {
+      position: fixed; right: 20px; bottom: 20px;
+      background: rgba(15, 23, 42, 0.95); color: var(--text);
+      padding: 12px 16px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border-glow);
+      box-shadow: 0 0 30px rgba(34, 211, 238, 0.2);
+      opacity: 0; transform: translateY(12px); pointer-events: none;
+      transition: 0.25s ease; z-index: 120; font-size: 13px; font-weight: 600;
+      max-width: min(420px, calc(100vw - 40px));
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.error { border-color: rgba(244, 114, 182, 0.4); }
+
+    @media (max-width: 1050px) {
+      html, body { overflow: auto; }
+      .app { height: auto; min-height: 100vh; }
+      .layout { grid-template-columns: 1fr; }
+      .mockup-stage { height: 480px; }
+    }
+
+    @media (max-width: 680px) {
+      .mockup-stage { height: 360px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app" id="appRoot">
+  <header class="viewer-hud">
+    <div class="brand">
+      <div class="logo">SM</div>
+      <div>
+        <h1>Sticker Mockup</h1>
+        <p>Neural perspective · blend · export</p>
+      </div>
+    </div>
+    <div class="hud-actions">
+      <button class="btn-ghost" id="resetSticker" type="button">Reset Sticker</button>
+      <button class="btn-danger" id="clearAll" type="button">Clear All</button>
+      <button class="btn-primary" id="downloadImage" type="button">Download</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <div class="layout">
+      <aside class="panel">
+        <section class="section">
+          <div class="section-title"><h2>Upload</h2></div>
+          <label for="bgFile">Background image</label>
+          <input id="bgFile" type="file" accept="image/*" />
+          <label for="stickerFile">Sticker PNG</label>
+          <input id="stickerFile" type="file" accept="image/png,image/*" />
+        </section>
+
+        <section class="section">
+          <div class="section-title"><h2>Preview Grid</h2></div>
+          <label for="gridMode">Grid</label>
+          <select id="gridMode">
+            <option value="off">Off</option>
+            <option value="on">On</option>
+          </select>
+          <div class="control">
+            <label for="gridSize">Grid size</label>
+            <input id="gridSize" type="range" min="20" max="140" value="60" />
+          </div>
+          <div class="control">
+            <label for="gridOpacity">Grid opacity</label>
+            <input id="gridOpacity" type="range" min="10" max="90" value="45" />
+          </div>
+        </section>
+      </aside>
+
+      <section class="stage-card">
+        <div class="toolbar">
+          <strong>Live mockup preview</strong>
+          <span>Drag the sticker to move. Drag cyan corner points for perspective.</span>
+        </div>
+
+        <div class="mockup-stage" id="stage">
+          <img id="backgroundImg" class="background-img" alt="Background" />
+          <div class="preview-grid" id="previewGrid"></div>
+          <div class="empty-state" id="emptyState">
+            <div>
+              <b>Upload your mockup files</b>
+              Add a background image and a transparent PNG sticker to start.
+            </div>
+          </div>
+          <div class="sticker-layer" id="stickerLayer">
+            <img id="stickerBlendImg" class="sticker-blend" alt="Sticker blend layer" />
+            <img id="stickerBrightImg" class="sticker-bright" alt="Sticker bright layer" />
+            <div class="sticker-outline"></div>
+            <div class="corner tl" data-corner="tl"></div>
+            <div class="corner tr" data-corner="tr"></div>
+            <div class="corner br" data-corner="br"></div>
+            <div class="corner bl" data-corner="bl"></div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <section class="section">
+          <div class="section-title"><h2>Sticker</h2></div>
+          <div class="control">
+            <label for="scale">Scale</label>
+            <input id="scale" type="range" min="10" max="300" value="100" />
+          </div>
+          <div class="control">
+            <label for="opacity">Opacity</label>
+            <input id="opacity" type="range" min="10" max="100" value="100" />
+          </div>
+          <label for="blendMode">Surface shadow blend</label>
+          <select id="blendMode">
+            <option value="normal">Normal</option>
+            <option value="multiply" selected>Multiply</option>
+            <option value="darken">Darken</option>
+            <option value="overlay">Overlay</option>
+            <option value="soft-light">Soft Light</option>
+          </select>
+          <div class="control">
+            <label for="surfaceStrength">Shadow strength</label>
+            <input id="surfaceStrength" type="range" min="0" max="100" value="42" />
+          </div>
+          <div class="control">
+            <label for="brightnessKeep">Keep brightness</label>
+            <input id="brightnessKeep" type="range" min="0" max="100" value="72" />
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-title"><h2>Export</h2></div>
+          <label for="exportFormat">Format</label>
+          <select id="exportFormat">
+            <option value="image/png">PNG</option>
+            <option value="image/jpeg">JPG</option>
+            <option value="image/webp">WEBP</option>
+          </select>
+          <label for="exportScale">Quality</label>
+          <select id="exportScale">
+            <option value="1">Standard (1x)</option>
+            <option value="2" selected>High (2x)</option>
+            <option value="3">Very High (3x)</option>
+            <option value="4">Ultra (4x)</option>
+          </select>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="viewer-status">
+    <div class="status-left">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span id="statusLabel">Ready</span>
+      <span class="status-chip" id="bgChip">no bg</span>
+      <span class="status-chip" id="stickerChip">no sticker</span>
+    </div>
+    <div class="status-right">
+      <a class="credit-link" href="index.html" title="2039 Tools">Тяни слоп</a>
+      <span class="status-chip">Local only</span>
+      <span id="statusTime">—</span>
+    </div>
+  </footer>
+</div>
+
+<div class="toast" id="toast">Done</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const STORAGE_KEY = "sticker-mockup-2039";
+  const $ = function (id) { return document.getElementById(id); };
+
+  const stage = $("stage");
+  const backgroundImg = $("backgroundImg");
+  const stickerLayer = $("stickerLayer");
+  const stickerBlendImg = $("stickerBlendImg");
+  const stickerBrightImg = $("stickerBrightImg");
+  const emptyState = $("emptyState");
+  const previewGrid = $("previewGrid");
+  const toast = $("toast");
+  const appRoot = $("appRoot");
+
+  const state = {
+    bgLoaded: false,
+    stickerLoaded: false,
+    stickerNaturalWidth: 600,
+    stickerNaturalHeight: 600,
+    baseWidth: 260,
+    baseHeight: 260,
+    x: 120,
+    y: 120,
+    scale: 1,
+    opacity: 100,
+    blendMode: "multiply",
+    surfaceStrength: 42,
+    brightnessKeep: 72,
+    manualPerspective: false,
+    corners: null,
+    gridMode: "off",
+    gridSize: 60,
+    gridOpacity: 45
+  };
+
+  function showToast(message, isError) {
+    toast.textContent = message;
+    toast.classList.toggle("error", !!isError);
+    toast.classList.add("show");
+    setTimeout(function () {
+      toast.classList.remove("show");
+      toast.classList.remove("error");
+    }, 2000);
+  }
+
+  function updateTime() {
+    $("statusTime").textContent = new Date().toLocaleTimeString();
+  }
+
+  function updateStatusChips() {
+    $("bgChip").textContent = state.bgLoaded ? "bg loaded" : "no bg";
+    $("stickerChip").textContent = state.stickerLoaded ? "sticker loaded" : "no sticker";
+    $("statusLabel").textContent = state.bgLoaded && state.stickerLoaded
+      ? "Mockup ready"
+      : state.bgLoaded || state.stickerLoaded
+        ? "Partial"
+        : "Ready";
+  }
+
+  function saveSettings() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      opacity: state.opacity,
+      blendMode: state.blendMode,
+      surfaceStrength: state.surfaceStrength,
+      brightnessKeep: state.brightnessKeep,
+      gridMode: state.gridMode,
+      gridSize: state.gridSize,
+      gridOpacity: state.gridOpacity,
+      exportFormat: $("exportFormat").value,
+      exportScale: $("exportScale").value
+    }));
+  }
+
+  function loadSettings() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (!saved) return;
+      if (saved.opacity !== undefined) { state.opacity = saved.opacity; $("opacity").value = saved.opacity; }
+      if (saved.blendMode) { state.blendMode = saved.blendMode; $("blendMode").value = saved.blendMode; }
+      if (saved.surfaceStrength !== undefined) { state.surfaceStrength = saved.surfaceStrength; $("surfaceStrength").value = saved.surfaceStrength; }
+      if (saved.brightnessKeep !== undefined) { state.brightnessKeep = saved.brightnessKeep; $("brightnessKeep").value = saved.brightnessKeep; }
+      if (saved.gridMode) { state.gridMode = saved.gridMode; $("gridMode").value = saved.gridMode; }
+      if (saved.gridSize !== undefined) { state.gridSize = saved.gridSize; $("gridSize").value = saved.gridSize; }
+      if (saved.gridOpacity !== undefined) { state.gridOpacity = saved.gridOpacity; $("gridOpacity").value = saved.gridOpacity; }
+      if (saved.exportFormat) $("exportFormat").value = saved.exportFormat;
+      if (saved.exportScale) $("exportScale").value = saved.exportScale;
+    } catch (e) { /* ignore */ }
+  }
+
+  function loadFile(input, callback) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function () { callback(reader.result); };
+    reader.readAsDataURL(file);
+  }
+
+  function setBackground(src) {
+    backgroundImg.onload = function () {
+      state.bgLoaded = true;
+      stage.classList.add("has-bg");
+      updateEmptyState();
+      updateStatusChips();
+      showToast("Background loaded");
+    };
+    backgroundImg.src = src;
+  }
+
+  function setSticker(src) {
+    const tempImage = new Image();
+    tempImage.onload = function () {
+      state.stickerLoaded = true;
+      state.stickerNaturalWidth = tempImage.naturalWidth || 600;
+      state.stickerNaturalHeight = tempImage.naturalHeight || 600;
+      const ratio = state.stickerNaturalHeight / state.stickerNaturalWidth;
+      state.baseWidth = 260;
+      state.baseHeight = Math.max(80, Math.round(260 * ratio));
+      stickerBlendImg.src = src;
+      stickerBrightImg.src = src;
+      fitStickerToStage();
+      updateEmptyState();
+      updateStatusChips();
+      showToast("Sticker loaded");
+    };
+    tempImage.src = src;
+  }
+
+  function updateEmptyState() {
+    emptyState.style.display = state.bgLoaded || state.stickerLoaded ? "none" : "grid";
+    stickerLayer.style.display = state.stickerLoaded ? "block" : "none";
+  }
+
+  function fitStickerToStage() {
+    const rect = stage.getBoundingClientRect();
+    state.x = Math.round(rect.width / 2 - state.baseWidth / 2);
+    state.y = Math.round(rect.height / 2 - state.baseHeight / 2);
+    state.scale = 1;
+    state.manualPerspective = false;
+    state.corners = null;
+    $("scale").value = 100;
+    updatePreview();
+    showToast("Sticker position reset");
+  }
+
+  function updatePreview() {
+    stickerLayer.style.width = state.baseWidth + "px";
+    stickerLayer.style.height = state.baseHeight + "px";
+    stickerLayer.style.opacity = state.opacity / 100;
+
+    if (state.blendMode === "normal") {
+      stickerBlendImg.style.opacity = 0;
+      stickerBrightImg.style.opacity = 1;
+      stickerBlendImg.style.mixBlendMode = "normal";
+    } else {
+      stickerBlendImg.style.opacity = state.surfaceStrength / 100;
+      stickerBrightImg.style.opacity = state.brightnessKeep / 100;
+      stickerBlendImg.style.mixBlendMode = state.blendMode;
+    }
+
+    if (state.manualPerspective && state.corners) {
+      stickerLayer.style.transform = matrix3dFromCorners(state.baseWidth, state.baseHeight, state.corners);
+    } else {
+      stickerLayer.style.transform = "translate(" + state.x + "px, " + state.y + "px) scale(" + state.scale + ")";
+    }
+
+    updateGrid();
+    saveSettings();
+  }
+
+  function updateGrid() {
+    previewGrid.classList.toggle("is-visible", state.gridMode === "on");
+    previewGrid.style.setProperty("--grid-size", state.gridSize + "px");
+    previewGrid.style.setProperty("--grid-opacity", state.gridOpacity / 100);
+  }
+
+  function getDefaultCorners() {
+    const width = state.baseWidth * state.scale;
+    const height = state.baseHeight * state.scale;
+    return [
+      { x: state.x, y: state.y },
+      { x: state.x + width, y: state.y },
+      { x: state.x + width, y: state.y + height },
+      { x: state.x, y: state.y + height }
+    ];
+  }
+
+  function getCornerBox(corners) {
+    const xs = corners.map(function (p) { return p.x; });
+    const ys = corners.map(function (p) { return p.y; });
+    return {
+      x: Math.min.apply(null, xs),
+      y: Math.min.apply(null, ys),
+      width: Math.max.apply(null, xs) - Math.min.apply(null, xs),
+      height: Math.max.apply(null, ys) - Math.min.apply(null, ys)
+    };
+  }
+
+  function matrix3dFromCorners(width, height, corners) {
+    const src = [
+      { x: 0, y: 0 }, { x: width, y: 0 },
+      { x: width, y: height }, { x: 0, y: height }
+    ];
+    const h = getHomography(src, corners);
+    const matrix = [
+      h[0], h[3], 0, h[6],
+      h[1], h[4], 0, h[7],
+      0, 0, 1, 0,
+      h[2], h[5], 0, h[8]
+    ];
+    return "matrix3d(" + matrix.map(function (v) { return Number(v).toFixed(10); }).join(",") + ")";
+  }
+
+  function getHomography(src, dst) {
+    const a = [];
+    const b = [];
+    for (let i = 0; i < 4; i++) {
+      const x = src[i].x, y = src[i].y, X = dst[i].x, Y = dst[i].y;
+      a.push([x, y, 1, 0, 0, 0, -x * X, -y * X]); b.push(X);
+      a.push([0, 0, 0, x, y, 1, -x * Y, -y * Y]); b.push(Y);
+    }
+    const h = solveLinearSystem(a, b);
+    h.push(1);
+    return h;
+  }
+
+  function solveLinearSystem(a, b) {
+    const n = b.length;
+    for (let i = 0; i < n; i++) {
+      let maxRow = i;
+      for (let k = i + 1; k < n; k++) {
+        if (Math.abs(a[k][i]) > Math.abs(a[maxRow][i])) maxRow = k;
+      }
+      const tmpA = a[i]; a[i] = a[maxRow]; a[maxRow] = tmpA;
+      const tmpB = b[i]; b[i] = b[maxRow]; b[maxRow] = tmpB;
+      const pivot = a[i][i] || 1e-12;
+      for (let j = i; j < n; j++) a[i][j] /= pivot;
+      b[i] /= pivot;
+      for (let k = 0; k < n; k++) {
+        if (k === i) continue;
+        const factor = a[k][i];
+        for (let j = i; j < n; j++) a[k][j] -= factor * a[i][j];
+        b[k] -= factor * b[i];
+      }
+    }
+    return b;
+  }
+
+  function setupDrag() {
+    let dragMode = null;
+    let activeCorner = null;
+    let startMouse = null;
+    let startX = 0;
+    let startY = 0;
+    let startCorners = null;
+
+    stickerLayer.addEventListener("pointerdown", function (event) {
+      if (!state.stickerLoaded) return;
+      const corner = event.target.closest(".corner");
+      const stageRect = stage.getBoundingClientRect();
+      startMouse = { x: event.clientX - stageRect.left, y: event.clientY - stageRect.top };
+
+      if (corner) {
+        dragMode = "corner";
+        activeCorner = corner.dataset.corner;
+        state.manualPerspective = true;
+        if (!state.corners) state.corners = getDefaultCorners();
+        startCorners = state.corners.map(function (p) { return { x: p.x, y: p.y }; });
+      } else {
+        dragMode = "move";
+        activeCorner = null;
+        startX = state.x;
+        startY = state.y;
+        if (state.manualPerspective && state.corners) {
+          startCorners = state.corners.map(function (p) { return { x: p.x, y: p.y }; });
+        }
+      }
+      stickerLayer.setPointerCapture(event.pointerId);
+    });
+
+    stickerLayer.addEventListener("pointermove", function (event) {
+      if (!dragMode || !startMouse) return;
+      const stageRect = stage.getBoundingClientRect();
+      const currentMouse = { x: event.clientX - stageRect.left, y: event.clientY - stageRect.top };
+      const dx = currentMouse.x - startMouse.x;
+      const dy = currentMouse.y - startMouse.y;
+
+      if (dragMode === "move") {
+        if (state.manualPerspective && state.corners && startCorners) {
+          state.corners = startCorners.map(function (p) { return { x: p.x + dx, y: p.y + dy }; });
+          const box = getCornerBox(state.corners);
+          state.x = box.x;
+          state.y = box.y;
+        } else {
+          state.x = startX + dx;
+          state.y = startY + dy;
+        }
+      }
+
+      if (dragMode === "corner") {
+        const indexMap = { tl: 0, tr: 1, br: 2, bl: 3 };
+        const index = indexMap[activeCorner];
+        state.corners = startCorners.map(function (p) { return { x: p.x, y: p.y }; });
+        state.corners[index] = { x: startCorners[index].x + dx, y: startCorners[index].y + dy };
+        const box = getCornerBox(state.corners);
+        state.x = box.x;
+        state.y = box.y;
+      }
+
+      updatePreview();
+    });
+
+    window.addEventListener("pointerup", function () {
+      dragMode = null;
+      activeCorner = null;
+      startMouse = null;
+      startCorners = null;
+    });
+  }
+
+  function getBackgroundDrawRect(stageWidth, stageHeight) {
+    const imageRatio = backgroundImg.naturalWidth / backgroundImg.naturalHeight;
+    const stageRatio = stageWidth / stageHeight;
+    let width, height, x, y;
+    if (imageRatio > stageRatio) {
+      width = stageWidth;
+      height = width / imageRatio;
+      x = 0;
+      y = (stageHeight - height) / 2;
+    } else {
+      height = stageHeight;
+      width = height * imageRatio;
+      x = (stageWidth - width) / 2;
+      y = 0;
+    }
+    return { x: x, y: y, width: width, height: height };
+  }
+
+  function shiftAndScaleCornersForExport(corners, bgRect, exportScale) {
+    return corners.map(function (p) {
+      return { x: (p.x - bgRect.x) * exportScale, y: (p.y - bgRect.y) * exportScale };
+    });
+  }
+
+  function cssBlendToCanvas(mode) {
+    const map = { normal: "source-over", multiply: "multiply", darken: "darken", overlay: "overlay", "soft-light": "soft-light" };
+    return map[mode] || "source-over";
+  }
+
+  function compileShader(gl, type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      const message = gl.getShaderInfoLog(shader);
+      gl.deleteShader(shader);
+      throw new Error(message);
+    }
+    return shader;
+  }
+
+  function createProgram(gl, vertexSource, fragmentSource) {
+    const vertexShader = compileShader(gl, gl.VERTEX_SHADER, vertexSource);
+    const fragmentShader = compileShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
+    const program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      const message = gl.getProgramInfoLog(program);
+      gl.deleteProgram(program);
+      throw new Error(message);
+    }
+    return program;
+  }
+
+  function invert3x3(m) {
+    const a = m[0], b = m[1], c = m[2], d = m[3], e = m[4], f = m[5], g = m[6], h = m[7], i = m[8];
+    const A = e * i - f * h, B = c * h - b * i, C = b * f - c * e;
+    const D = f * g - d * i, E = a * i - c * g, F = c * d - a * f;
+    const G = d * h - e * g, H = b * g - a * h, I = a * e - b * d;
+    const det = a * A + b * D + c * G;
+    if (Math.abs(det) < 1e-12) return null;
+    return [A / det, B / det, C / det, D / det, E / det, F / det, G / det, H / det, I / det];
+  }
+
+  function transpose3x3(m) {
+    return [m[0], m[3], m[6], m[1], m[4], m[7], m[2], m[5], m[8]];
+  }
+
+  function homographyFromDestinationToUV(corners) {
+    const src = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
+    const uvToDestination = getHomography(src, corners);
+    return invert3x3(uvToDestination);
+  }
+
+  function renderStickerWithWebGL(outputWidth, outputHeight, corners) {
+    const canvas = document.createElement("canvas");
+    canvas.width = outputWidth;
+    canvas.height = outputHeight;
+    const gl = canvas.getContext("webgl", { alpha: true, premultipliedAlpha: false, preserveDrawingBuffer: true, antialias: true });
+    if (!gl) return null;
+
+    const destinationToUV = homographyFromDestinationToUV(corners);
+    if (!destinationToUV) return null;
+
+    const vertexSource = "attribute vec2 a_position;attribute vec2 a_pixel;varying vec2 v_pixel;void main(){v_pixel=a_pixel;gl_Position=vec4(a_position,0.0,1.0);}";
+    const fragmentSource = "precision mediump float;uniform sampler2D u_texture;uniform mat3 u_destinationToUV;varying vec2 v_pixel;void main(){vec3 mapped=u_destinationToUV*vec3(v_pixel,1.0);vec2 uv=mapped.xy/mapped.z;if(uv.x<0.0||uv.x>1.0||uv.y<0.0||uv.y>1.0){discard;}vec4 color=texture2D(u_texture,uv);if(color.a<0.003){discard;}gl_FragColor=color;}";
+
+    const program = createProgram(gl, vertexSource, fragmentSource);
+    gl.viewport(0, 0, outputWidth, outputHeight);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.useProgram(program);
+
+    const positionLocation = gl.getAttribLocation(program, "a_position");
+    const pixelLocation = gl.getAttribLocation(program, "a_pixel");
+    const matrixLocation = gl.getUniformLocation(program, "u_destinationToUV");
+    const textureLocation = gl.getUniformLocation(program, "u_texture");
+
+    const vertices = new Float32Array([
+      -1, -1, 0, outputHeight,
+       1, -1, outputWidth, outputHeight,
+      -1,  1, 0, 0,
+      -1,  1, 0, 0,
+       1, -1, outputWidth, outputHeight,
+       1,  1, outputWidth, 0
+    ]);
+
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+    const stride = 16;
+    gl.enableVertexAttribArray(positionLocation);
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, stride, 0);
+    gl.enableVertexAttribArray(pixelLocation);
+    gl.vertexAttribPointer(pixelLocation, 2, gl.FLOAT, false, stride, 8);
+
+    const texture = gl.createTexture();
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, stickerBrightImg);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.uniform1i(textureLocation, 0);
+    gl.uniformMatrix3fv(matrixLocation, false, new Float32Array(transpose3x3(destinationToUV)));
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    return canvas;
+  }
+
+  function downloadComposite() {
+    if (!state.bgLoaded || !state.stickerLoaded) {
+      showToast("Upload background and sticker first", true);
+      return;
+    }
+
+    const format = $("exportFormat").value;
+    const exportScale = Number($("exportScale").value) || 2;
+    const stageRect = stage.getBoundingClientRect();
+    const bgRect = getBackgroundDrawRect(stageRect.width, stageRect.height);
+    const outputWidth = Math.round(bgRect.width * exportScale);
+    const outputHeight = Math.round(bgRect.height * exportScale);
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d", { alpha: true });
+    canvas.width = outputWidth;
+    canvas.height = outputHeight;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.clearRect(0, 0, outputWidth, outputHeight);
+
+    if (format === "image/jpeg") {
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, outputWidth, outputHeight);
+    }
+
+    ctx.drawImage(backgroundImg, 0, 0, backgroundImg.naturalWidth, backgroundImg.naturalHeight, 0, 0, outputWidth, outputHeight);
+
+    const stageCorners = state.manualPerspective && state.corners ? state.corners : getDefaultCorners();
+    const exportCorners = shiftAndScaleCornersForExport(stageCorners, bgRect, exportScale);
+    const stickerCanvas = renderStickerWithWebGL(outputWidth, outputHeight, exportCorners);
+
+    if (!stickerCanvas) {
+      showToast("WebGL export not available", true);
+      return;
+    }
+
+    if (state.blendMode === "normal") {
+      ctx.globalCompositeOperation = "source-over";
+      ctx.globalAlpha = state.opacity / 100;
+      ctx.drawImage(stickerCanvas, 0, 0);
+    } else {
+      ctx.globalCompositeOperation = cssBlendToCanvas(state.blendMode);
+      ctx.globalAlpha = (state.opacity / 100) * (state.surfaceStrength / 100);
+      ctx.drawImage(stickerCanvas, 0, 0);
+      ctx.globalCompositeOperation = "source-over";
+      ctx.globalAlpha = (state.opacity / 100) * (state.brightnessKeep / 100);
+      ctx.drawImage(stickerCanvas, 0, 0);
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = "source-over";
+
+    const quality = format === "image/jpeg" ? 0.94 : 1;
+    const dataUrl = canvas.toDataURL(format, quality);
+    const link = document.createElement("a");
+    const extension = format.split("/")[1].replace("jpeg", "jpg");
+    link.download = "sticker-mockup-2039." + extension;
+    link.href = dataUrl;
+    link.click();
+    showToast("Download started");
+    updateTime();
+  }
+
+  function clearAll() {
+    state.bgLoaded = false;
+    state.stickerLoaded = false;
+    state.stickerNaturalWidth = 600;
+    state.stickerNaturalHeight = 600;
+    state.baseWidth = 260;
+    state.baseHeight = 260;
+    state.x = 120;
+    state.y = 120;
+    state.scale = 1;
+    state.opacity = 100;
+    state.blendMode = "multiply";
+    state.surfaceStrength = 42;
+    state.brightnessKeep = 72;
+    state.manualPerspective = false;
+    state.corners = null;
+    state.gridMode = "off";
+    state.gridSize = 60;
+    state.gridOpacity = 45;
+
+    backgroundImg.removeAttribute("src");
+    stickerBlendImg.removeAttribute("src");
+    stickerBrightImg.removeAttribute("src");
+    stage.classList.remove("has-bg");
+    stickerLayer.style.display = "none";
+    emptyState.style.display = "grid";
+
+    $("bgFile").value = "";
+    $("stickerFile").value = "";
+    $("scale").value = 100;
+    $("opacity").value = 100;
+    $("blendMode").value = "multiply";
+    $("surfaceStrength").value = 42;
+    $("brightnessKeep").value = 72;
+    $("gridMode").value = "off";
+    $("gridSize").value = 60;
+    $("gridOpacity").value = 45;
+
+    updatePreview();
+    updateStatusChips();
+    showToast("Cleared");
+  }
+
+  $("bgFile").addEventListener("change", function (e) { loadFile(e.target, setBackground); });
+  $("stickerFile").addEventListener("change", function (e) { loadFile(e.target, setSticker); });
+
+  $("scale").addEventListener("input", function (e) {
+    const previousScale = state.scale;
+    const nextScale = Number(e.target.value) / 100;
+    if (state.manualPerspective && state.corners) {
+      const box = getCornerBox(state.corners);
+      const centerX = box.x + box.width / 2;
+      const centerY = box.y + box.height / 2;
+      const factor = nextScale / previousScale;
+      state.corners = state.corners.map(function (p) {
+        return { x: centerX + (p.x - centerX) * factor, y: centerY + (p.y - centerY) * factor };
+      });
+    }
+    state.scale = nextScale;
+    updatePreview();
+  });
+
+  $("opacity").addEventListener("input", function (e) { state.opacity = Number(e.target.value); updatePreview(); });
+
+  $("blendMode").addEventListener("change", function (e) {
+    state.blendMode = e.target.value;
+    if (state.blendMode === "normal") {
+      state.surfaceStrength = 0;
+      state.brightnessKeep = 100;
+    } else {
+      state.surfaceStrength = 42;
+      state.brightnessKeep = 72;
+    }
+    $("surfaceStrength").value = state.surfaceStrength;
+    $("brightnessKeep").value = state.brightnessKeep;
+    updatePreview();
+  });
+
+  $("surfaceStrength").addEventListener("input", function (e) { state.surfaceStrength = Number(e.target.value); updatePreview(); });
+  $("brightnessKeep").addEventListener("input", function (e) { state.brightnessKeep = Number(e.target.value); updatePreview(); });
+  $("gridMode").addEventListener("change", function (e) { state.gridMode = e.target.value; updatePreview(); });
+  $("gridSize").addEventListener("input", function (e) { state.gridSize = Number(e.target.value); updatePreview(); });
+  $("gridOpacity").addEventListener("input", function (e) { state.gridOpacity = Number(e.target.value); updatePreview(); });
+  $("exportFormat").addEventListener("change", saveSettings);
+  $("exportScale").addEventListener("change", saveSettings);
+
+  $("resetSticker").addEventListener("click", fitStickerToStage);
+  $("clearAll").addEventListener("click", clearAll);
+  $("downloadImage").addEventListener("click", downloadComposite);
+
+  appRoot.addEventListener("mousemove", function (e) {
+    const rect = appRoot.getBoundingClientRect();
+    appRoot.style.setProperty("--mesh-x", ((e.clientX - rect.left) / rect.width) * 100 + "%");
+    appRoot.style.setProperty("--mesh-y", ((e.clientY - rect.top) / rect.height) * 100 + "%");
+  });
+
+  setupDrag();
+  loadSettings();
+  updatePreview();
+  updateStatusChips();
+  updateTime();
+});
+</script>
+
+</body>
+</html>

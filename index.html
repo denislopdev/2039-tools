@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="2039 Tools — бесплатные веб-инструменты для дизайна и разработки от Тяни слоп." />
+  <title>2039 Tools — Тяни слоп</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --void: #020617;
+      --void-2: #0b1120;
+      --glass: rgba(15, 23, 42, 0.62);
+      --border: rgba(148, 163, 184, 0.14);
+      --border-glow: rgba(34, 211, 238, 0.35);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --cyan: #22d3ee;
+      --violet: #a78bfa;
+      --pink: #f472b6;
+      --emerald: #34d399;
+      --radius: 20px;
+      --radius-sm: 12px;
+      --font: "Outfit", system-ui, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --shadow: 0 25px 80px rgba(0, 0, 0, 0.55);
+      --glow: 0 0 40px rgba(34, 211, 238, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--void);
+      min-height: 100vh;
+    }
+
+    .page {
+      --mesh-x: 50%;
+      --mesh-y: 30%;
+      position: relative;
+      min-height: 100vh;
+      isolation: isolate;
+      background:
+        radial-gradient(ellipse 80% 60% at var(--mesh-x) var(--mesh-y), rgba(34, 211, 238, 0.09), transparent 55%),
+        radial-gradient(ellipse 60% 50% at 85% 15%, rgba(167, 139, 250, 0.11), transparent 50%),
+        radial-gradient(ellipse 50% 40% at 10% 80%, rgba(244, 114, 182, 0.07), transparent 45%),
+        linear-gradient(180deg, var(--void) 0%, var(--void-2) 100%);
+    }
+
+    .page::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 90% 80% at 50% 45%, black 20%, transparent 75%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      box-shadow: 0 0 32px rgba(34, 211, 238, 0.4);
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: #020617;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-text h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-text p {
+      margin: 2px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .header-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .header-links a {
+      padding: 9px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.18s ease;
+    }
+
+    .link-ghost {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+    }
+
+    .link-ghost:hover {
+      border-color: var(--border-glow);
+      background: rgba(34, 211, 238, 0.06);
+      transform: translateY(-1px);
+    }
+
+    .link-primary {
+      color: #020617;
+      background: linear-gradient(135deg, var(--cyan), #67e8f9);
+      box-shadow: 0 0 20px rgba(34, 211, 238, 0.25);
+    }
+
+    .link-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 28px rgba(34, 211, 238, 0.4);
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 48px 0 56px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--cyan);
+      background: rgba(34, 211, 238, 0.08);
+      border: 1px solid rgba(34, 211, 238, 0.2);
+      margin-bottom: 24px;
+    }
+
+    .hero-badge span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald);
+      animation: pulse 2s ease infinite;
+    }
+
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+
+    .hero h2 {
+      margin: 0 0 16px;
+      font-size: clamp(36px, 6vw, 56px);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #fff 30%, var(--cyan) 70%, var(--violet));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      margin: 0 auto;
+      max-width: 560px;
+      font-size: 17px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 36px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .stat span {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* Filters */
+    .filters {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .filter-btn {
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--muted);
+      transition: 0.18s ease;
+    }
+
+    .filter-btn:hover {
+      color: var(--text);
+      border-color: var(--border-glow);
+      background: rgba(34, 211, 238, 0.06);
+    }
+
+    .filter-btn.active {
+      color: #020617;
+      background: linear-gradient(135deg, var(--cyan), #67e8f9);
+      border-color: transparent;
+      box-shadow: 0 0 18px rgba(34, 211, 238, 0.3);
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      border-radius: var(--radius);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(24px);
+      box-shadow: var(--shadow), var(--glow);
+      transition: 0.22s ease;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(34, 211, 238, 0.04), rgba(167, 139, 250, 0.04));
+      opacity: 0;
+      transition: opacity 0.22s;
+    }
+
+    .card:hover {
+      border-color: var(--border-glow);
+      transform: translateY(-3px);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6), 0 0 50px rgba(34, 211, 238, 0.15);
+    }
+
+    .card:hover::before { opacity: 1; }
+
+    .card > * { position: relative; z-index: 1; }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: #020617;
+      flex-shrink: 0;
+    }
+
+    .card-tag {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .card p {
+      margin: 0 0 20px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--muted);
+      flex: 1;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .card-actions a {
+      flex: 1;
+      text-align: center;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.18s ease;
+    }
+
+    .btn-open {
+      color: #020617;
+      background: linear-gradient(135deg, var(--cyan), #67e8f9);
+      box-shadow: 0 0 16px rgba(34, 211, 238, 0.2);
+    }
+
+    .btn-open:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 24px rgba(34, 211, 238, 0.35);
+    }
+
+    .icon-design { background: linear-gradient(135deg, var(--violet), var(--pink)); }
+    .icon-image { background: linear-gradient(135deg, var(--cyan), var(--emerald)); }
+    .icon-dev   { background: linear-gradient(135deg, var(--pink), var(--violet)); }
+
+    /* Footer */
+    footer {
+      margin-top: 64px;
+      padding: 32px;
+      border-radius: var(--radius);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(24px);
+      text-align: center;
+    }
+
+    footer h4 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    footer p {
+      margin: 0 0 16px;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    footer a {
+      color: var(--cyan);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    .footer-copy {
+      margin-top: 20px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .card.hidden { display: none; }
+
+    @media (max-width: 640px) {
+      .hero { padding: 32px 0 40px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page" id="pageRoot">
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">39</div>
+        <div class="brand-text">
+          <h1>2039 Tools</h1>
+          <p>Изготовлено Тяни слоп</p>
+        </div>
+      </div>
+      <div class="header-links">
+        <a class="link-ghost" href="https://github.com/denislopdev/2039-tools" target="_blank" rel="noopener">GitHub</a>
+        <a class="link-primary" href="#tools">Открыть инструменты</a>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-badge"><span aria-hidden="true"></span> Бесплатно · Локально в браузере</div>
+      <h2>Neural utilities<br />for creators</h2>
+      <p>Коллекция веб-инструментов для дизайна, изображений и разработки. Без регистрации, без сервера — всё работает прямо у вас в браузере.</p>
+      <div class="hero-stats">
+        <div class="stat"><strong>9</strong><span>инструментов</span></div>
+        <div class="stat"><strong>0</strong><span>отправок на сервер</span></div>
+        <div class="stat"><strong>∞</strong><span>использований</span></div>
+      </div>
+    </section>
+
+    <section id="tools">
+      <div class="filters" role="tablist" aria-label="Категории">
+        <button class="filter-btn active" data-filter="all" type="button">Все</button>
+        <button class="filter-btn" data-filter="design" type="button">Design</button>
+        <button class="filter-btn" data-filter="image" type="button">Image</button>
+        <button class="filter-btn" data-filter="dev" type="button">Dev</button>
+      </div>
+
+      <div class="grid" id="toolGrid">
+
+        <article class="card" data-category="design dev">
+          <div class="card-top">
+            <div class="card-icon icon-design">QR</div>
+            <span class="card-tag">Design · Dev</span>
+          </div>
+          <h3>QR Generator</h3>
+          <p>QR-коды для URL, WiFi, vCard, WhatsApp, оплаты, SMS, email, геолокации. Логотип, рамка, подпись.</p>
+          <div class="card-actions">
+            <a class="btn-open" href="qr-generator-2039.html">Открыть</a>
+          </div>
+        </article>
+
+        <article class="card" data-category="design">
+          <div class="card-top">
+            <div class="card-icon icon-design">CP</div>
+            <span class="card-tag">Design</span>
+          </div>
+          <h3>Color Palette</h3>
+          <p>Генератор гармоничных цветовых палитр. Экспорт в CSS, сохранение, предпросмотр на UI-макете.</p>
+          <div class="card-actions">
+            <a class="btn-open" href="color-palette-2039.html">Открыть</a>
+          </div>
+        </article>
+
+        <article class="card" data-category="design">
+          <div class="card-top">
+            <div class="card-icon icon-design">CW</div>
+            <span class="card-tag">Design</span>
+          </div>
+          <h3>Color Wheel</h3>
+          <p>Интерактивное цветовое колесо. HSL, HEX, RGB — копирование одним кликом.</p>
+          <div class="card-actions">
+            <a class="btn-open" href="color-wheel-2039.html">Открыть</a>
+          </div>
+        </article>
+
+        <article class="card" data-category="image">
+          <div class="card-top">
+            <div class="card-icon icon-image">RS</div>
+            <span class="card-tag">Image</span>
+          </div>
+          <h3>Image Resizer</h3>
+          <p>Изменение размера изображений с сохранением пропорций. PNG, JPEG, WebP — пакетная обработка.</p>
+          <div class="card-actions">
+            <a class="btn-open" href="image-resizer-2039.html">Открыть</a>
+          </div>
+        </article>
+
+        <article class="card" data-category="image">
+          <div class="card-top">
+            <div class="card-icon icon-image">CR</div>
+            <span class="card-tag">Image</span>
+          </div>
+          <h3>Image Cropper</h3>
+          <p>Обрезка изображений с произвольным соотношением сторон. Drag &amp; resize, экспорт в PNG/JPEG.</p>
+          <div class="card-actions">
+            <a class="btn-open" href="image-cropper-2039.html">Открыть</a>
+          </div>
+        </article>
+
+        <article class="card" data-category="image dev">
+          <div class="card-top">
+            <div class="card-icon icon-image">B64</div>
+            <span class="card-tag">Image · Dev</span>
+          </div>
+          <h3>Photo to Base64</h3>
+          <p>Конвертация изображений в Base64-строку для CSS, HTML и встраивания в код.</p>
+          <div class="card-actions">
+            <a class="btn-open" href="photo-base64-2039.html">Открыть</a>
+          </div>
+        </article>
+
+        <article class="card" data-category="design image">
+          <div class="card-top">
+            <div class="card-icon icon-design">ST</div>
+            <span class="card-tag">Design · Image</span>
+          </div>
+          <h3>Sticker Mockup</h3>
+          <p>Мокап стикеров на фоне. Загрузка фона и стикера, настройка размера, тени и экспорт.</p>
+          <div class="card-actions">
+            <a class="btn-open" href="sticker-mockup-2039.html">Открыть</a>
+          </div>
+        </article>
+
+        <article class="card" data-category="dev">
+          <div class="card-top">
+            <div class="card-icon icon-dev">&lt;/&gt;</div>
+            <span class="card-tag">Dev</span>
+          </div>
+          <h3>HTML Viewer</h3>
+          <p>Редактор HTML с живым превью. Ace Editor, подсветка синтаксиса, тёмная и светлая тема.</p>
+          <div class="card-actions">
+            <a class="btn-open" href="html-viewer-2039.html">Открыть</a>
+          </div>
+        </article>
+
+        <article class="card" data-category="dev">
+          <div class="card-top">
+            <div class="card-icon icon-dev">VE</div>
+            <span class="card-tag">Dev</span>
+          </div>
+          <h3>HTML Visual Editor</h3>
+          <p>Визуальный конструктор HTML-страниц. Блоки, стили, превью — без написания кода вручную.</p>
+          <div class="card-actions">
+            <a class="btn-open" href="html-visual-editor-2039.html">Открыть</a>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <footer>
+      <h4>Лицензия и использование</h4>
+      <p>Все инструменты бесплатны. При размещении на своём сайте укажите:<br /><strong>«Изготовлено Тяни слоп»</strong></p>
+      <a href="https://github.com/denislopdev/2039-tools" target="_blank" rel="noopener">github.com/denislopdev/2039-tools</a>
+      <div class="footer-copy">© 2026 Тяни слоп · 2039 Tools · MIT-free custom license</div>
+    </footer>
+  </div>
+</div>
+
+<script>
+(function () {
+  var page = document.getElementById("pageRoot");
+  var cards = document.querySelectorAll(".card");
+  var buttons = document.querySelectorAll(".filter-btn");
+
+  document.addEventListener("mousemove", function (e) {
+    var x = (e.clientX / window.innerWidth * 100).toFixed(1) + "%";
+    var y = (e.clientY / window.innerHeight * 100).toFixed(1) + "%";
+    page.style.setProperty("--mesh-x", x);
+    page.style.setProperty("--mesh-y", y);
+  });
+
+  buttons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var filter = btn.dataset.filter;
+      buttons.forEach(function (b) { b.classList.toggle("active", b === btn); });
+      cards.forEach(function (card) {
+        if (filter === "all") {
+          card.classList.remove("hidden");
+        } else {
+          var cats = (card.dataset.category || "").split(" ");
+          card.classList.toggle("hidden", cats.indexOf(filter) === -1);
+        }
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

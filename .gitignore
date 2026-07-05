@@ -1,0 +1,11 @@
+# Android project (separate release later)
+antenna-player/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/

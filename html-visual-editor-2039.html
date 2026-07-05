@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTML Visual Editor — 2039</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --void: #020617;
+      --void-2: #0b1120;
+      --glass: rgba(15, 23, 42, 0.62);
+      --border: rgba(148, 163, 184, 0.14);
+      --border-glow: rgba(34, 211, 238, 0.35);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --cyan: #22d3ee;
+      --violet: #a78bfa;
+      --pink: #f472b6;
+      --emerald: #34d399;
+      --radius: 20px;
+      --radius-sm: 12px;
+      --font: "Outfit", system-ui, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --shadow: 0 25px 80px rgba(0, 0, 0, 0.55);
+      --glow: 0 0 40px rgba(34, 211, 238, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--void);
+      overflow: hidden;
+    }
+
+    .app {
+      --mesh-x: 50%;
+      --mesh-y: 35%;
+      position: relative;
+      height: 100vh;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 10px;
+      padding: 12px;
+      isolation: isolate;
+      background:
+        radial-gradient(ellipse 80% 60% at var(--mesh-x) var(--mesh-y), rgba(34, 211, 238, 0.09), transparent 55%),
+        radial-gradient(ellipse 60% 50% at 85% 15%, rgba(167, 139, 250, 0.11), transparent 50%),
+        radial-gradient(ellipse 50% 40% at 10% 80%, rgba(244, 114, 182, 0.07), transparent 45%),
+        linear-gradient(180deg, var(--void) 0%, var(--void-2) 100%);
+    }
+
+    .app::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 90% 80% at 50% 45%, black 20%, transparent 75%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .viewer-hud, .icon-toolbar, .workspace, .viewer-status { position: relative; z-index: 1; }
+
+    .viewer-hud {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 18px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: rgba(2, 6, 23, 0.72);
+      backdrop-filter: blur(20px) saturate(1.4);
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+
+    .logo {
+      width: 38px; height: 38px; border-radius: 11px;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      box-shadow: 0 0 24px rgba(34, 211, 238, 0.35);
+      display: grid; place-items: center;
+      font-size: 11px; font-weight: 700; color: #020617; flex-shrink: 0;
+    }
+
+    .brand h1 { margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+    .brand p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+
+    .hud-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    button {
+      border: none; cursor: pointer; font-family: inherit; font-weight: 600;
+      border-radius: var(--radius-sm); padding: 9px 13px; transition: 0.18s ease;
+    }
+
+    .btn-primary {
+      color: #020617;
+      background: linear-gradient(135deg, var(--cyan), #67e8f9);
+      box-shadow: 0 0 20px rgba(34, 211, 238, 0.25);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 0 28px rgba(34, 211, 238, 0.4); }
+
+    .btn-light, .btn-ghost {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+    }
+    .btn-light:hover, .btn-ghost:hover {
+      border-color: var(--border-glow);
+      background: rgba(34, 211, 238, 0.06);
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      color: #fff;
+      background: linear-gradient(135deg, #f472b6, #e11d48);
+      border: 1px solid rgba(244, 114, 182, 0.3);
+    }
+
+    .icon-toolbar {
+      display: flex; gap: 5px; flex-wrap: wrap; align-items: center;
+      padding: 8px 10px; border-radius: var(--radius);
+      background: var(--glass); border: 1px solid var(--border);
+      backdrop-filter: blur(24px); box-shadow: var(--shadow), var(--glow);
+    }
+
+    .tool-btn {
+      width: 38px; height: 38px; padding: 0; border-radius: 11px;
+      background: rgba(255, 255, 255, 0.03); color: var(--text);
+      border: 1px solid var(--border); display: grid; place-items: center;
+      transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s, background 0.18s;
+    }
+    .tool-btn svg {
+      width: 18px; height: 18px; stroke: currentColor; fill: none;
+      stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .tool-btn:hover {
+      transform: translateY(-2px); border-color: var(--border-glow);
+      box-shadow: 0 0 18px rgba(34, 211, 238, 0.15);
+      background: rgba(34, 211, 238, 0.06);
+    }
+    .tool-btn.active {
+      color: #020617;
+      background: linear-gradient(135deg, var(--cyan), #67e8f9);
+      border-color: transparent;
+      box-shadow: 0 0 20px rgba(34, 211, 238, 0.35);
+    }
+
+    .tool-separator { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+
+    .help-btn {
+      width: 26px; height: 26px; padding: 0; border-radius: 50%;
+      background: rgba(34, 211, 238, 0.1); color: var(--cyan);
+      font-weight: 800; display: inline-grid; place-items: center;
+      border: 1px solid rgba(34, 211, 238, 0.2);
+    }
+
+    .workspace {
+      display: grid; grid-template-columns: 300px 1fr 360px;
+      gap: 12px; min-height: 0;
+    }
+
+    .panel, .editor-card, .preview-card {
+      background: var(--glass); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow);
+      backdrop-filter: blur(24px); overflow: hidden; min-height: 0;
+    }
+
+    .panel-header {
+      padding: 14px 16px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+      background: rgba(2, 6, 23, 0.5);
+    }
+    .panel-header h2 { margin: 0; font-size: 14px; font-weight: 700; }
+    .panel-header p { margin: 4px 0 0; font-size: 12px; color: var(--muted); }
+    .panel-header .tag {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--cyan);
+    }
+
+    .panel-body { padding: 14px; overflow: auto; max-height: calc(100vh - 240px); }
+
+    .section-title {
+      font-size: 10px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.12em; margin: 16px 0 10px;
+    }
+    .section-title:first-child { margin-top: 0; }
+
+    .block-btn {
+      width: 100%; text-align: left; margin-bottom: 8px;
+      display: flex; align-items: center; gap: 10px; line-height: 1.3;
+      padding: 10px 12px; color: var(--text);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+    }
+    .block-btn:hover {
+      border-color: var(--border-glow);
+      background: rgba(34, 211, 238, 0.06);
+      transform: translateY(-1px);
+    }
+    .block-icon {
+      width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+      display: grid; place-items: center; font-size: 11px; font-weight: 700;
+      background: rgba(34, 211, 238, 0.1); color: var(--cyan);
+      border: 1px solid rgba(34, 211, 238, 0.15);
+    }
+
+    .hint {
+      font-size: 12px; line-height: 1.6; color: var(--muted);
+      background: rgba(34, 211, 238, 0.04);
+      border: 1px dashed rgba(34, 211, 238, 0.2);
+      border-radius: var(--radius-sm); padding: 12px; margin-top: 12px;
+    }
+
+    .main-area { display: grid; min-height: 0; }
+    .preview-card, .editor-card { display: flex; flex-direction: column; }
+    .editor-card { display: none; }
+    .main-area.html-mode .preview-card { display: none; }
+    .main-area.html-mode .editor-card { display: flex; min-height: calc(100vh - 210px); }
+
+    .preview-toolbar, .code-toolbar {
+      padding: 12px 14px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; flex-wrap: wrap; background: rgba(2, 6, 23, 0.5);
+    }
+    .preview-toolbar strong, .code-toolbar strong { font-size: 14px; }
+
+    .device-switch { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+
+    .device-switch button, .viewport-btn {
+      padding: 7px 12px; font-size: 12px; font-weight: 600;
+      background: rgba(255, 255, 255, 0.03); color: var(--muted);
+      border: 1px solid var(--border); border-radius: 999px;
+    }
+    .device-switch button.active, .viewport-btn.active {
+      color: #020617;
+      background: linear-gradient(135deg, var(--cyan), #67e8f9);
+      border-color: transparent;
+      box-shadow: 0 0 18px rgba(34, 211, 238, 0.3);
+    }
+
+    .preview-shell {
+      padding: 16px; flex: 1; overflow: auto; min-height: 0;
+      background:
+        radial-gradient(circle at center, rgba(34, 211, 238, 0.04), transparent 60%),
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0 1px, transparent 1px 12px);
+    }
+
+    .preview-frame {
+      width: 100%; height: 100%;
+      min-height: calc(100vh - 270px);
+      border: 1px solid var(--border); border-radius: 16px;
+      background: #fff; transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      display: block; margin: 0 auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+    .preview-frame.tablet { width: 768px; max-width: 100%; }
+    .preview-frame.mobile { width: 390px; max-width: 100%; border-radius: 28px; }
+
+    textarea#codeEditor {
+      width: 100%; height: 100%; min-height: 520px; resize: none;
+      border: none; outline: none; padding: 18px;
+      font-family: var(--mono); font-size: 13px; line-height: 1.65;
+      color: #cbd5e1; background: #060b18;
+    }
+
+    .field { margin-bottom: 12px; }
+    label {
+      display: block; font-size: 12px; color: var(--muted);
+      margin-bottom: 6px; font-weight: 600;
+    }
+    input, select {
+      width: 100%; border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 10px 11px; font-family: inherit; outline: none;
+      background: rgba(2, 6, 23, 0.5); color: var(--text);
+    }
+    input:focus, select:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.12);
+    }
+    input[type="color"] { height: 42px; padding: 4px; cursor: pointer; }
+
+    .two-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .selected-info {
+      padding: 11px 12px; border-radius: var(--radius-sm);
+      background: rgba(34, 211, 238, 0.08); color: var(--cyan);
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+      margin-bottom: 14px; border: 1px solid rgba(34, 211, 238, 0.2);
+    }
+
+    .conditional-field { display: none; }
+    .conditional-field.show { display: block; }
+
+    .move-grid {
+      display: grid; grid-template-columns: repeat(3, 40px);
+      justify-content: center; gap: 6px; margin-bottom: 12px;
+    }
+    .move-grid button {
+      padding: 8px; background: rgba(255,255,255,0.04);
+      color: var(--text); border: 1px solid var(--border);
+    }
+    .move-grid button:hover { border-color: var(--border-glow); background: rgba(34,211,238,0.06); }
+
+    .viewer-status {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 8px 16px; border-radius: var(--radius);
+      border: 1px solid var(--border); background: rgba(2, 6, 23, 0.78);
+      backdrop-filter: blur(16px); font-family: var(--mono); font-size: 11px; color: var(--muted);
+    }
+    .status-left, .status-right { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+    .credit-link {
+      color: var(--muted);
+      font-size: 11px;
+      text-decoration: none;
+      transition: color 0.18s ease;
+    }
+    .credit-link:hover { color: var(--cyan); }
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--emerald); box-shadow: 0 0 10px var(--emerald);
+      animation: pulse 2s ease infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+    .status-chip {
+      padding: 3px 8px; border-radius: 6px;
+      border: 1px solid var(--border); background: rgba(255,255,255,0.03);
+    }
+
+    .toast {
+      position: fixed; right: 20px; bottom: 20px;
+      background: rgba(15, 23, 42, 0.95); color: var(--text);
+      padding: 12px 16px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border-glow);
+      box-shadow: 0 0 30px rgba(34, 211, 238, 0.2);
+      opacity: 0; transform: translateY(12px); pointer-events: none;
+      transition: 0.25s ease; z-index: 120; font-size: 13px; font-weight: 600;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(2, 6, 23, 0.75); backdrop-filter: blur(8px);
+      display: none; align-items: center; justify-content: center;
+      padding: 20px; z-index: 130;
+    }
+    .modal-backdrop.show { display: flex; }
+
+    .modal {
+      width: min(560px, 100%);
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: var(--shadow), 0 0 60px rgba(34, 211, 238, 0.1);
+      overflow: hidden;
+    }
+    .modal-header {
+      padding: 16px 18px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    }
+    .modal-header h3 { margin: 0; font-size: 17px; }
+    .modal-body { padding: 18px; color: var(--muted); font-size: 14px; line-height: 1.7; }
+    .close-btn { background: rgba(255,255,255,0.05); color: var(--text); padding: 8px 12px; border: 1px solid var(--border); }
+
+    @media (max-width: 1240px) {
+      .workspace { grid-template-columns: 280px 1fr; }
+      .inspector { grid-column: 1 / -1; }
+      .panel-body { max-height: none; }
+    }
+    @media (max-width: 840px) {
+      html, body { overflow: auto; }
+      .app { height: auto; min-height: 100vh; overflow: auto; }
+      .viewer-hud { flex-direction: column; align-items: flex-start; }
+      .workspace { grid-template-columns: 1fr; }
+      .hud-actions { width: 100%; }
+      .hud-actions button { flex: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="appRoot">
+    <header class="viewer-hud">
+      <div class="brand">
+        <div class="logo">VE</div>
+        <div>
+          <h1>Visual Editor</h1>
+          <p>Neural design · live HTML sync</p>
+        </div>
+      </div>
+      <div class="hud-actions">
+        <button class="btn-ghost" data-action="showVisualMode" type="button">Visual</button>
+        <button class="btn-ghost" data-action="showHtmlMode" type="button">Code</button>
+        <button class="btn-primary" data-action="downloadFile" type="button">Export</button>
+      </div>
+    </header>
+
+    <div class="icon-toolbar" aria-label="Toolbar">
+      <button class="tool-btn" title="New" data-action="newFile" type="button"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg></button>
+      <button class="tool-btn" title="Open" data-action="openFile" type="button"><svg viewBox="0 0 24 24"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></button>
+      <button class="tool-btn" title="Save" data-action="downloadFile" type="button"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg></button>
+      <button class="tool-btn" title="Print" data-action="printPage" type="button"><svg viewBox="0 0 24 24"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg></button>
+      <button class="tool-btn" title="Preview" data-action="openExternalPreview" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/></svg></button>
+      <div class="tool-separator"></div>
+      <button class="tool-btn" title="Undo" data-action="undo" type="button"><svg viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>
+      <button class="tool-btn" title="Redo" data-action="redo" type="button"><svg viewBox="0 0 24 24"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13"/></svg></button>
+      <div class="tool-separator"></div>
+      <button class="tool-btn" title="Copy HTML" data-action="copyCode" type="button"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+      <button class="tool-btn active" title="HTML Code" data-action="showHtmlMode" type="button"><svg viewBox="0 0 24 24"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg></button>
+      <button class="tool-btn" title="Visual Preview" data-action="showVisualMode" type="button"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      <button class="tool-btn" title="Insert Image" data-action="insertImage" type="button"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></button>
+      <button class="tool-btn" title="Insert Link" data-action="insertLink" type="button"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+      <div class="tool-separator"></div>
+      <button class="tool-btn" title="Zoom In" data-action="zoomIn" type="button"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg></button>
+      <button class="tool-btn" title="Zoom Out" data-action="zoomOut" type="button"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M8 11h6"/></svg></button>
+      <button class="tool-btn" title="Format" data-action="formatCode" type="button"><svg viewBox="0 0 24 24"><path d="M21 10H7"/><path d="M21 6H3"/><path d="M21 14H3"/><path d="M21 18H7"/></svg></button>
+      <div class="tool-separator"></div>
+      <button class="tool-btn" title="Help" data-help="general" type="button">?</button>
+      <input id="fileInput" type="file" accept=".html,.htm,.txt" hidden />
+    </div>
+
+    <main class="workspace">
+      <aside class="panel">
+        <div class="panel-header">
+          <div><span class="tag">Blocks</span><h2>Ready Sections</h2><p>Insert polished layouts.</p></div>
+          <button class="help-btn" data-help="blocks" type="button">?</button>
+        </div>
+        <div class="panel-body">
+          <div class="section-title">Library</div>
+          <button class="block-btn" data-block="hero" type="button"><span class="block-icon">H</span>Hero Section</button>
+          <button class="block-btn" data-block="features" type="button"><span class="block-icon">F</span>Feature Cards</button>
+          <button class="block-btn" data-block="pricing" type="button"><span class="block-icon">$</span>Pricing Card</button>
+          <button class="block-btn" data-block="cta" type="button"><span class="block-icon">C</span>Call To Action</button>
+          <button class="block-btn" data-block="testimonials" type="button"><span class="block-icon">T</span>Testimonials</button>
+          <button class="block-btn" data-block="gallery" type="button"><span class="block-icon">G</span>Image Gallery</button>
+          <button class="block-btn" data-block="stats" type="button"><span class="block-icon">S</span>Stats Section</button>
+          <button class="block-btn" data-block="faq" type="button"><span class="block-icon">?</span>FAQ Section</button>
+          <button class="block-btn" data-block="contact" type="button"><span class="block-icon">@</span>Contact Form</button>
+          <button class="block-btn" data-block="footer" type="button"><span class="block-icon">#</span>Footer</button>
+          <div class="hint">Select any element in Visual Preview. Resize with cyan handles, move with the top grip, or edit from the inspector panel.</div>
+        </div>
+      </aside>
+
+      <section class="main-area" id="mainArea">
+        <div class="preview-card">
+          <div class="preview-toolbar">
+            <strong>Visual Preview</strong>
+            <div class="device-switch">
+              <button class="active" data-device="desktop" type="button">Desktop</button>
+              <button data-device="tablet" type="button">Tablet</button>
+              <button data-device="mobile" type="button">Mobile</button>
+              <button data-action="showHtmlMode" type="button">Code</button>
+              <button data-action="openExternalPreview" type="button">Preview</button>
+              <button class="help-btn" data-help="preview" type="button">?</button>
+            </div>
+          </div>
+          <div class="preview-shell">
+            <iframe class="preview-frame" id="preview" title="Visual preview" sandbox="allow-scripts allow-same-origin"></iframe>
+          </div>
+        </div>
+        <div class="editor-card">
+          <div class="code-toolbar">
+            <strong>HTML Source</strong>
+            <div class="device-switch">
+              <button class="active" data-action="showHtmlMode" type="button">Code</button>
+              <button data-action="showVisualMode" type="button">Visual</button>
+              <button data-action="openExternalPreview" type="button">Preview</button>
+              <button class="help-btn" data-help="htmlcode" type="button">?</button>
+            </div>
+          </div>
+          <textarea id="codeEditor" spellcheck="false"></textarea>
+        </div>
+      </section>
+
+      <aside class="panel inspector">
+        <div class="panel-header">
+          <div><span class="tag">Inspector</span><h2>Design Panel</h2><p>Customize selection.</p></div>
+          <button class="help-btn" data-help="inspector" type="button">?</button>
+        </div>
+        <div class="panel-body">
+          <div class="selected-info" id="selectedInfo">No element selected</div>
+          <div class="field"><label>Text Content</label><input id="textInput" type="text" placeholder="Select a text element" /></div>
+          <div class="field conditional-field" id="linkField"><label>Button / Link URL</label><input id="linkInput" type="text" placeholder="https://example.com" /></div>
+          <div class="field conditional-field" id="imageField"><label>Image URL</label><input id="imageInput" type="text" placeholder="Paste image link" /></div>
+          <div class="field">
+            <label>Font Family <button class="help-btn" data-help="fonts" type="button">?</button></label>
+            <select id="fontFamilyInput">
+              <option value="'Outfit', system-ui, sans-serif">Outfit</option>
+              <option value="'Segoe UI', Arial, sans-serif">Segoe UI</option>
+              <option value="Arial, sans-serif">Arial</option>
+              <option value="Georgia, serif">Georgia</option>
+              <option value="'Times New Roman', serif">Times New Roman</option>
+              <option value="'Courier New', monospace">Courier New</option>
+              <option value="system-ui, sans-serif">System UI</option>
+            </select>
+          </div>
+          <div class="two-cols">
+            <div class="field"><label>Text Color</label><input id="colorInput" type="color" value="#e2e8f0" /></div>
+            <div class="field"><label>Background</label><input id="bgInput" type="color" value="#0f172a" /></div>
+          </div>
+          <div class="two-cols">
+            <div class="field"><label>Font Size</label><input id="fontSizeInput" type="number" value="16" min="8" max="120" /></div>
+            <div class="field"><label>Radius</label><input id="radiusInput" type="number" value="16" min="0" max="120" /></div>
+          </div>
+          <div class="two-cols">
+            <div class="field"><label>Width</label><input id="widthInput" type="number" placeholder="Auto" min="10" max="2000" /></div>
+            <div class="field"><label>Height</label><input id="heightInput" type="number" placeholder="Auto" min="10" max="2000" /></div>
+          </div>
+          <div class="two-cols">
+            <div class="field"><label>Padding</label><input id="paddingInput" type="number" value="16" min="0" max="140" /></div>
+            <div class="field"><label>Font Weight</label>
+              <select id="weightInput">
+                <option value="400">Regular</option><option value="500">Medium</option>
+                <option value="600">Semi Bold</option><option value="700">Bold</option><option value="800">Extra Bold</option>
+              </select>
+            </div>
+          </div>
+          <div class="section-title">Move Element</div>
+          <div class="move-grid">
+            <span></span><button data-move="up" type="button">↑</button><span></span>
+            <button data-move="left" type="button">←</button><button data-move="reset" type="button">•</button><button data-move="right" type="button">→</button>
+            <span></span><button data-move="down" type="button">↓</button><span></span>
+          </div>
+          <button class="btn-light" style="width:100%;margin-bottom:10px;" data-action="duplicateSelected" type="button">Duplicate Selected</button>
+          <button class="btn-danger" style="width:100%;" data-action="deleteSelected" type="button">Delete Selected</button>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="viewer-status">
+      <div class="status-left">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span id="statusMode">Visual mode</span>
+        <span class="status-chip" id="lineCount">0 lines</span>
+        <span class="status-chip" id="zoomLabel">100%</span>
+      </div>
+      <div class="status-right">
+        <a class="credit-link" href="index.html" title="2039 Tools">Тяни слоп</a>
+        <span class="status-chip">HTML</span>
+        <span id="statusTime">Ready</span>
+      </div>
+    </footer>
+  </div>
+
+  <div class="modal-backdrop" id="helpModal">
+    <div class="modal">
+      <div class="modal-header"><h3 id="helpTitle">Help</h3><button class="close-btn" id="closeHelp" type="button">Close</button></div>
+      <div class="modal-body" id="helpText"></div>
+    </div>
+  </div>
+  <div class="toast" id="toast">Done</div>
+
+  <script src="html-visual-editor-2039-app.js"></script>
+</body>
+</html>
