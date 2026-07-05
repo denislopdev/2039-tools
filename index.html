@@ -425,6 +425,60 @@
       color: var(--muted);
     }
 
+    .footer-bottom {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .footer-credits {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+      flex-wrap: wrap;
+    }
+
+    .credit-link {
+      color: var(--muted);
+      font-size: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.18s ease;
+    }
+
+    .credit-link:hover { color: var(--cyan); }
+
+    .bmc-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      color: #1a1200;
+      background: linear-gradient(135deg, #ffdd00, #f59e0b);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.45);
+      transition: 0.18s ease;
+      animation: bmc-pulse 2.5s ease-in-out infinite;
+    }
+
+    .bmc-link:hover {
+      transform: translateY(-1px) scale(1.04);
+      box-shadow: 0 0 28px rgba(255, 221, 0, 0.6);
+      color: #1a1200;
+    }
+
+    @keyframes bmc-pulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.45); }
+      50% { box-shadow: 0 0 28px rgba(255, 221, 0, 0.6); }
+    }
+
     .card.hidden { display: none; }
 
     @media (max-width: 640px) {
@@ -587,7 +641,13 @@
       <h4>License &amp; usage</h4>
       <p>All tools are free to use. When embedding on your website, please include:<br /><strong>Made by Denis Lop</strong></p>
       <a href="https://github.com/denislopdev/2039-tools" target="_blank" rel="noopener">github.com/denislopdev/2039-tools</a>
-      <div class="footer-copy">© 2026 Denis Lop · 2039 Tools · custom open license</div>
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2026 Denis Lop · 2039 Tools · custom open license</div>
+        <div class="footer-credits">
+          <a class="credit-link" href="https://github.com/denislopdev" target="_blank" rel="noopener">Denis Lop</a>
+          <a class="bmc-link" href="https://buymeacoffee.com/denislopdev" target="_blank" rel="noopener noreferrer">☕ Buy me a coffee</a>
+        </div>
+      </div>
     </footer>
   </div>
 </div>

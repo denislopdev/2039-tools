@@ -366,6 +366,61 @@
       transition: color 0.18s ease;
     }
     .credit-link:hover { color: var(--cyan); }
+    .hud-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: 0.18s ease;
+    }
+
+    .home-link:hover {
+      color: var(--cyan);
+      border-color: var(--border-glow);
+      background: rgba(34, 211, 238, 0.06);
+    }
+
+    .bmc-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      text-decoration: none;
+      color: #1a1200;
+      background: linear-gradient(135deg, #ffdd00, #f59e0b);
+      box-shadow: 0 0 18px rgba(245, 158, 11, 0.4);
+      transition: 0.18s ease;
+      animation: bmc-pulse 2.5s ease-in-out infinite;
+    }
+
+    .bmc-link:hover {
+      transform: translateY(-1px) scale(1.03);
+      box-shadow: 0 0 26px rgba(255, 221, 0, 0.55);
+      color: #1a1200;
+    }
+
+    @keyframes bmc-pulse {
+      0%, 100% { box-shadow: 0 0 18px rgba(245, 158, 11, 0.4); }
+      50% { box-shadow: 0 0 26px rgba(255, 221, 0, 0.55); }
+    }
 
     .status-dot {
       width: 7px; height: 7px; border-radius: 50%;
@@ -411,12 +466,15 @@
 
 <div class="app" id="appRoot">
   <header class="viewer-hud">
-    <div class="brand">
+    <div class="hud-left">
+      <a class="home-link" href="index.html" title="2039 Tools Home">← Home</a>
+      <div class="brand">
       <div class="logo">SM</div>
       <div>
         <h1>Sticker Mockup</h1>
         <p>Neural perspective · blend · export</p>
       </div>
+    </div>
     </div>
     <div class="hud-actions">
       <button class="btn-ghost" id="resetSticker" type="button">Reset Sticker</button>
@@ -539,6 +597,7 @@
     </div>
     <div class="status-right">
       <a class="credit-link" href="index.html" title="2039 Tools">Denis Lop</a>
+      <a class="bmc-link" href="https://buymeacoffee.com/denislopdev" target="_blank" rel="noopener noreferrer">☕ Buy me a coffee</a>
       <span class="status-chip">Local only</span>
       <span id="statusTime">—</span>
     </div>
