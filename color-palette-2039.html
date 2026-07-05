@@ -126,24 +126,26 @@
 
     @media (min-width: 981px) {
       .layout {
-        grid-template-columns: 1fr 320px;
-        grid-template-areas:
-          "overview overview"
-          "picker active"
-          "picker settings"
-          "palette palette"
-          "collections collections"
-          "help help";
+        grid-template-columns: minmax(0, 1fr) 300px;
+        grid-template-rows: auto auto auto auto auto auto;
         align-items: start;
       }
 
-      .panel-overview { grid-area: overview; }
-      .panel-picker { grid-area: picker; }
-      .panel-active { grid-area: active; }
-      .panel-settings { grid-area: settings; }
-      .panel-palette { grid-area: palette; }
-      .collections { grid-area: collections; }
-      .help-section { grid-area: help; }
+      .panel-overview { grid-column: 1 / -1; grid-row: 1; }
+      .panel-picker { grid-column: 1; grid-row: 2 / 4; align-self: stretch; }
+      .panel-active { grid-column: 2; grid-row: 2; }
+      .panel-settings { grid-column: 2; grid-row: 3; }
+      .panel-palette { grid-column: 1 / -1; grid-row: 4; }
+      .collections { grid-column: 1 / -1; grid-row: 5; }
+      .help-section { grid-column: 1 / -1; grid-row: 6; }
+
+      .panel-active .color-preview { min-height: 72px; margin-bottom: 10px; }
+      .panel-active .code-row { padding: 8px 10px; margin-bottom: 6px; }
+      .panel-active .panel-header { padding: 10px 14px; }
+      .panel-active .panel-body { padding: 12px 14px; }
+      .panel-settings .panel-header { padding: 10px 14px; }
+      .panel-settings .panel-body { padding: 12px 14px; }
+      .panel-settings .field { margin-bottom: 10px; }
     }
 
     @media (max-width: 980px) {
@@ -287,7 +289,7 @@
       background:
         radial-gradient(circle at center, rgba(34, 211, 238, 0.04), transparent 60%),
         repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0 1px, transparent 1px 12px);
-      min-height: 220px;
+      min-height: 180px;
       overflow: hidden;
       display: grid;
       place-items: center;
