@@ -9,8 +9,8 @@ $repo = "C:\Users\denis\Desktop\2039 Tools"
 $name = "2039-tools"
 
 Set-Location $repo
+$env:PATH = "$env:TEMP\mingit\cmd;$env:PATH"
 
-# Ensure portable tools exist
 if (-not (Test-Path $git)) {
     Write-Host "MinGit not found. Re-run publish from Cursor Agent." -ForegroundColor Red
     exit 1
@@ -23,19 +23,20 @@ if (-not (Test-Path $gh)) {
 & $gh auth status 2>&1 | Out-Null
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Not logged in. Run first:" -ForegroundColor Yellow
-    Write-Host "  & `"$gh`" auth login" -ForegroundColor Cyan
+    Write-Host ('  & "' + $gh + '" auth login') -ForegroundColor Cyan
     exit 1
 }
 
+& $gh auth setup-git 2>&1 | Out-Null
+
 Write-Host "Creating repository $name..." -ForegroundColor Cyan
-& $gh repo create "denislopdev/$name" --public --source . --remote origin --description "2039 Tools — free web utilities by Denis Lop" 2>&1
+& $gh repo create ("denislopdev/" + $name) --public --source . --remote origin --description "2039 Tools - free web utilities by Denis Lop" 2>&1
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Repo may already exist, adding remote..." -ForegroundColor Yellow
     & $git remote remove origin 2>$null
-    & $git remote add origin "https://github.com/denislopdev/$name.git"
+    & $git remote add origin ("https://github.com/denislopdev/" + $name + ".git")
 }
 
-# Rename branch to main if needed
 $branch = & $git branch --show-current
 if ($branch -eq "master") {
     & $git branch -M main
@@ -48,12 +49,12 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "Enabling GitHub Pages..." -ForegroundColor Cyan
-& $gh api repos/denislopdev/$name/pages -X POST -f build_type=legacy -f source[branch]=main -f source[path]=/ 2>&1
+& $gh api ("repos/denislopdev/" + $name + "/pages") -X POST -f build_type=legacy -f "source[branch]=main" -f "source[path]=/" 2>&1
 if ($LASTEXITCODE -ne 0) {
-    & $gh api repos/denislopdev/$name/pages -X POST -f build_type=legacy -f source[branch]=master -f source[path]=/ 2>&1
+    & $gh api ("repos/denislopdev/" + $name + "/pages") -X POST -f build_type=legacy -f "source[branch]=master" -f "source[path]=/" 2>&1
 }
 
 Write-Host ""
 Write-Host "Done!" -ForegroundColor Green
-Write-Host "Site (wait 1-3 min): https://denislopdev.github.io/$name/" -ForegroundColor Green
-Write-Host "Repo: https://github.com/denislopdev/$name" -ForegroundColor Green
+Write-Host ("Site (wait 1-3 min): https://denislopdev.github.io/" + $name + "/") -ForegroundColor Green
+Write-Host ("Repo: https://github.com/denislopdev/" + $name) -ForegroundColor Green
