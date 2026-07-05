@@ -28,7 +28,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "Creating repository $name..." -ForegroundColor Cyan
-& $gh repo create "denislopdev/$name" --public --source . --remote origin --description "2039 Tools — free web utilities by Tani slop" 2>&1
+& $gh repo create "denislopdev/$name" --public --source . --remote origin --description "2039 Tools — free web utilities by Denis Lop" 2>&1
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Repo may already exist, adding remote..." -ForegroundColor Yellow
     & $git remote remove origin 2>$null

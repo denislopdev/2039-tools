@@ -1,33 +1,33 @@
 # 2039 Tools
 
-Бесплатная коллекция веб-инструментов для дизайна и разработки от **Тяни слоп**.
+A free collection of web utilities for design and development by **Denis Lop**.
 
-**Открыть все инструменты:** [denislopdev.github.io/2039-tools](https://denislopdev.github.io/2039-tools/)
+**Open all tools:** [denislopdev.github.io/2039-tools](https://denislopdev.github.io/2039-tools/)
 
-## Инструменты
+## Tools
 
-| | Название | Описание |
+| | Name | Description |
 |---|---|---|
-| 🔲 | [QR Generator](qr-generator-2039.html) | QR-коды: URL, WiFi, vCard, WhatsApp, оплата и др. |
-| 🎨 | [Color Palette](color-palette-2039.html) | Генератор цветовых палитр |
-| 🎯 | [Color Wheel](color-wheel-2039.html) | Интерактивное цветовое колесо |
-| 📐 | [Image Resizer](image-resizer-2039.html) | Изменение размера изображений |
-| ✂️ | [Image Cropper](image-cropper-2039.html) | Обрезка изображений |
-| 📷 | [Photo to Base64](photo-base64-2039.html) | Конвертация фото в Base64 |
-| 🏷️ | [Sticker Mockup](sticker-mockup-2039.html) | Мокапы стикеров |
-| 👁️ | [HTML Viewer](html-viewer-2039.html) | Просмотр и редактирование HTML |
-| ✏️ | [HTML Visual Editor](html-visual-editor-2039.html) | Визуальный HTML-редактор |
+| 🔲 | [QR Generator](qr-generator-2039.html) | QR codes: URL, WiFi, vCard, WhatsApp, payments, and more |
+| 🎨 | [Color Palette](color-palette-2039.html) | Color palette generator |
+| 🎯 | [Color Wheel](color-wheel-2039.html) | Interactive color wheel |
+| 📐 | [Image Resizer](image-resizer-2039.html) | Resize images |
+| ✂️ | [Image Cropper](image-cropper-2039.html) | Crop images |
+| 📷 | [Photo to Base64](photo-base64-2039.html) | Convert photos to Base64 |
+| 🏷️ | [Sticker Mockup](sticker-mockup-2039.html) | Sticker mockups |
+| 👁️ | [HTML Viewer](html-viewer-2039.html) | View and edit HTML |
+| ✏️ | [HTML Visual Editor](html-visual-editor-2039.html) | Visual HTML editor |
 
-Все инструменты работают **локально в браузере** — данные не отправляются на сервер.
+All tools run **locally in your browser** — no data is sent to a server.
 
-## Лицензия
+## License
 
-Свободное использование с указанием авторства. При публикации на сайте укажите:
+Free to use with attribution. When publishing on your website, include:
 
-**«Изготовлено Тяни слоп»** → [github.com/denislopdev/2039-tools](https://github.com/denislopdev/2039-tools)
+**Made by Denis Lop** → [github.com/denislopdev/2039-tools](https://github.com/denislopdev/2039-tools)
 
-Подробности — в файле [LICENSE](LICENSE).
+See [LICENSE](LICENSE) for details.
 
-## Автор
+## Author
 
-[Тяни слоп](https://github.com/denislopdev) · 2039 Tools
+[Denis Lop](https://github.com/denislopdev) · 2039 Tools
